@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@model Game
+
+
+@for (int i = 0; i < 20; i++)
+{
+    <p>@i</p>
+    <p>@Model.results[i].name</p>
+    <p>@Model.description</p>
+    <p>@Model.results[i].metacritic</p>
+    <br />
+    @*<img src="@Model.results[i].background_image" width="25%" height="25%" alt="Alternate Text" />*@
+}
