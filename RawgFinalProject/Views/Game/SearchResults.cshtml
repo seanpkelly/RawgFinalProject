@@ -1,0 +1,32 @@
+﻿
+@model Game
+
+<p>Name: @Model.name</p>
+<p>Description: @Model.description</p>
+<p>Metacritic Score: @Model.metacritic</p>
+<p>Clip: @Model.clip</p>
+@*<p>
+    Genre: @foreach (var g in Model.genres)
+    {
+    <p>@g.name</p>
+}
+    </p>
+    <p>
+        Tags: @foreach (var t in Model.tags)
+        {
+        <p>@t.name</p>
+    }
+        </p>*@
+
+
+
+
+
+        @*@foreach(Result r in Model)
+            {
+                <p>@r.metacritic</p>
+                <p>@r.name</p>
+                <p>@r.tags</p>
+                <br />
+                <img src="@r.background_image" width="25%" height="25%" alt="Alternate Text" />
+            }*@

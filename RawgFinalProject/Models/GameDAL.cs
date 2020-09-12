@@ -34,20 +34,13 @@ namespace RawgFinalProject.Models
             return games;
         }
 
-        public async Task<List<Result>> GetSearch(string output)
+        public async Task<Game> GetGameByName(string output)
         {
-            var client = GetClient(); //calls the method that give the API the general info needed to receive data from the API
-            var response = await client.GetAsync($"games/{output}"); //uses the client (HttpClient) to receive data from the API based off of a certain endpoint
-            Game searchedGames = await response.Content.ReadAsAsync<Game>();
+            var client = GetClient(); 
+            var response = await client.GetAsync($"games/{output}"); 
+            var searchedGames = await response.Content.ReadAsAsync<Game>();
 
-            List<Result> gameResult = new List<Result>();
-
-            for (int i = 0; i < searchedGames.results.Length; i++)
-            {
-                gameResult.Add(searchedGames.results[i]);
-            }
-
-            return gameResult;
+            return searchedGames;
 
         }
     }

@@ -28,17 +28,14 @@ namespace RawgFinalProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchResult(string query)
+        public async Task<IActionResult> SearchGameByName(string searchName)
         {
-            string output = query.Replace(" ", "-").ToLower();
+            string searchNameSlug = searchName.Replace(" ", "-").ToLower();
 
-            List<Result> searchedGames = await _gameDAL.GetSearch(output);
+            var searchedGames = await _gameDAL.GetGameByName(searchNameSlug);
 
-            return View(searchedGames);
+            return View("SearchResults", searchedGames);
 
         }
-
-
-
     }
 }

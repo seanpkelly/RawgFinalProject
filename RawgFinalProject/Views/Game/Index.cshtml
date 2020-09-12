@@ -7,17 +7,17 @@
 
 @model Game
 
-<form action="../Game/SearchResult" method="post">
-<input type="text" name="query" placeholder="Search for Games..." />
-<input type="submit" name="submit" />
+<form action="../Game/SearchGameByName" method="post">
+    <input type="text" name="searchName" placeholder="Search for Games..." />
+    <input type="submit" value="Search" />
 </form>
 
-@for (int i = 0; i < 20; i++)
+@*@for (int i = 0; i < 20; i++)
 {
     <p>@i</p>
     <p>@Model.results[i].name</p>
     <p>@Model.description</p>
     <p>@Model.results[i].metacritic</p>
     <br />
-    @*<img src="@Model.results[i].background_image" width="25%" height="25%" alt="Alternate Text" />*@
-}
+    <img src="@Model.results[i].background_image" width="25%" height="25%" alt="Alternate Text" />
+}*@
