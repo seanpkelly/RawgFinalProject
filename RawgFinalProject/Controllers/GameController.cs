@@ -26,5 +26,19 @@ namespace RawgFinalProject.Controllers
             return View(games);
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchResult(string query)
+        {
+            string output = query.Replace(" ", "-").ToLower();
+
+            List<Result> searchedGames = await _gameDAL.GetSearch(output);
+
+            return View(searchedGames);
+
+        }
+
+
+
     }
 }

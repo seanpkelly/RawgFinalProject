@@ -7,6 +7,10 @@
 
 @model Game
 
+<form action="../Game/SearchResult" method="post">
+<input type="text" name="query" placeholder="Search for Games..." />
+<input type="submit" name="submit" />
+</form>
 
 @for (int i = 0; i < 20; i++)
 {
