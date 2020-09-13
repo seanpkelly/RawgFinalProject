@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,11 +13,13 @@ namespace RawgFinalProject.Controllers
     {
         private readonly GameDAL _gameDAL;
         private readonly string _apiKey;
+        private readonly GameRecommendationDbContext _gameContext;
 
         public GameController(IConfiguration configuration)
         {
             _apiKey = configuration.GetSection("ApiKeys")["GameAPIKey"];
             _gameDAL = new GameDAL(_apiKey);
+            _gameContext = new GameRecommendationDbContext();
         }
 
         public async Task<IActionResult> Index()
@@ -32,10 +35,31 @@ namespace RawgFinalProject.Controllers
         {
             string searchNameSlug = searchName.Replace(" ", "-").ToLower();
 
-            var searchedGames = await _gameDAL.GetGameByName(searchNameSlug);
+            var searchResult = await _gameDAL.GetGameByName(searchNameSlug);
+
+            List<Game> searchedGames = new List<Game>();
+
+            searchedGames.Add(searchResult);
 
             return View("SearchResults", searchedGames);
 
+        }
+
+        public async Task<IActionResult> AddToFavorites(int id)
+        {
+           string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            UserFavorite f = new UserFavorite();
+
+            f.GameId = id;
+            f.UserId = activeUserId;
+
+            if (ModelState.IsValid)
+            {
+                _gameContext.UserFavorite.Add(f);
+                _gameContext.SaveChanges();
+            }
+          
+            return RedirectToAction("DisplayFavorites");
         }
     }
 }

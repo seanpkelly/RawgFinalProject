@@ -1,32 +1,111 @@
 ﻿
-@model Game
+@model List<Game>
 
-<p>Name: @Model.name</p>
-<p>Description: @Model.description</p>
-<p>Metacritic Score: @Model.metacritic</p>
-<p>Clip: @Model.clip</p>
-@*<p>
-    Genre: @foreach (var g in Model.genres)
-    {
-    <p>@g.name</p>
+@for (int i = 0; i < Model.Count; i++)
+{
+
+
+    <table class="table table-hover table-info" style="table-layout:fixed">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Metacritic Score
+            </th>
+            <th>
+                Background Image
+            </th>
+
+        </tr>
+        <tr class="thread-dark">
+
+
+            <td>@Model[i].name<br /></td>
+
+            <td>@Model[i].description_raw<br /></td>
+
+            <td>
+                @if (Model[i].metacritic == null)
+                {
+                    <a>Not availabile</a>
+                }
+                else
+                {
+                    @Model[i].metacritic
+                }
+            <br />
+        </td>
+
+        <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
+
+        <td>
+            <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
+                <input type="submit" class="btn-success" value="Add to Favorites" />
+
+            </form>
+
+
+            
+            
+        </td>
+
+            
+        @*<td>
+                @if (!Model[i].isFavorite)
+                {
+                    ///put logic to do if statement for if somethign is already a favorite like in spicey index
+                }
+
+
+            </td>*@
+
+
+
+
+
+    </tr>
+
+
+
+
+</table>
 }
-    </p>
-    <p>
-        Tags: @foreach (var t in Model.tags)
+
+
+
+
+
+
+
+
+
+
+@*<p>
+        Genre: @foreach (var g in Model.genres)
         {
-        <p>@t.name</p>
+        <p>@g.name</p>
     }
-        </p>*@
-
-
-
-
-
-        @*@foreach(Result r in Model)
+        </p>
+        <p>
+            Tags: @foreach (var t in Model.tags)
             {
-                <p>@r.metacritic</p>
-                <p>@r.name</p>
-                <p>@r.tags</p>
-                <br />
-                <img src="@r.background_image" width="25%" height="25%" alt="Alternate Text" />
-            }*@
+            <p>@t.name</p>
+        }
+            </p>*@
+
+
+
+
+
+@*@foreach(Result r in Model)
+    {
+        <p>@r.metacritic</p>
+        <p>@r.name</p>
+        <p>@r.tags</p>
+        <br />
+        <img src="@r.background_image" width="25%" height="25%" alt="Alternate Text" />
+    }*@
