@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "DisplayFavorites";
+}
+
+@model List<Game>
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    <table class="table table-hover table-info" style="table-layout:fixed">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Metacritic Score
+            </th>
+            <th>
+                Background Image
+            </th>
+
+        </tr>
+        <tr class="thread-dark">
+
+
+            <td>@Model[i].name<br /></td>
+
+            <td>@Model[i].description_raw<br /></td>
+
+            <td>
+                @if (Model[i].metacritic == null)
+                {
+                    <a>Not availabile</a>
+                }
+                else
+                {
+                    @Model[i].metacritic
+                }
+                <br />
+            </td>
+
+            <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
+        </tr>
+    </table>
+}

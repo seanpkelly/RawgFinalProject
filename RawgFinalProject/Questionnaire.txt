@@ -1,0 +1,16 @@
+0.) Do you enjoy playing video games (Cmon, if you didn't why are you here/)?
+1.) What kind of gamer would you say you are? (Casual, Intermediate, Hardcore)
+2.) How many hours a week would you say you play video games?
+3.) Age?
+4.) Preferred Console?
+5.) DO you like playing games alone or with friends?
+6.) Do you prefer strategic games or action games?
+7.) Favorite Games?: (Checklist)
+8.) What kinds of games don't you like?
+9.) Do you like math?
+10.) Last game you played?
+
+
+
+Maybe add a Take Questionnaire again function?
+

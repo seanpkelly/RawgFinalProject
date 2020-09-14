@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RawgFinalProject.Models;
 
@@ -33,7 +34,7 @@ namespace RawgFinalProject.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchGameByName(string searchName)
         {
-            string searchNameSlug = searchName.Replace(" ", "-").ToLower();
+            string searchNameSlug = searchName;
 
             var searchResult = await _gameDAL.GetGameByName(searchNameSlug);
 
@@ -46,6 +47,24 @@ namespace RawgFinalProject.Controllers
             return View("SearchResults", searchedGames);
 
         }
+
+        public async Task<IActionResult> DisplayFavorites()
+        {
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            //Creates list of favorites for the current user
+            var favList = await _gameContext.UserFavorite.Where(x => x.UserId == activeUserId).ToListAsync();
+
+            List<Game> convertList = new List<Game>();
+
+            for (int i = 0; i < favList.Count; i++)
+            {
+               convertList.Add(await SearchGameById(favList[i].GameId));
+            }
+
+            return View(convertList);
+        }
+
 
         public void AddToHistory(Game addToHistory)
         {
@@ -105,5 +124,14 @@ namespace RawgFinalProject.Controllers
 
             return RedirectToAction("DisplayFavorites");
         }
+
+
+        public async Task<Game> SearchGameById(int id)
+        {
+            var searchId = await _gameDAL.GetGameByName(id.ToString());
+
+            return searchId;
+        }
+
     }
 }
