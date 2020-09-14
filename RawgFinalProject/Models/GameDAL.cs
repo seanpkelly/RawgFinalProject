@@ -43,13 +43,20 @@ namespace RawgFinalProject.Models
             return searchedGames;
         }
 
-        public async Task<Game> GetGameSearch(string output)
+        public async Task<List<Result>> GetGameSearch(string output)
         {
             var client = GetClient();
             var response = await client.GetAsync($"games?search={output}");
-            var searchedGames = await response.Content.ReadAsAsync<Game>();
+            var searchedGames = await response.Content.ReadAsAsync<SearchResult>();
 
-            return searchedGames;
+            List<Result> gameResults = new List<Result>();
+
+            for (int i = 0; i < searchedGames.results.Length; i++)
+            {
+                gameResults.Add(searchedGames.results[i]);
+            }
+
+            return gameResults;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-@model List<Game>
+@model List<Result>
 
 @for (int i = 0; i < Model.Count; i++)
 {
@@ -11,46 +11,34 @@
                 Name
             </th>
             <th>
-                Description
-            </th>
-            <th>
                 Metacritic Score
             </th>
             <th>
                 Background Image
             </th>
-
         </tr>
         <tr class="thread-dark">
 
-
             <td>@Model[i].name<br /></td>
-
-            <td>@Model[i].description_raw<br /></td>
 
             <td>
                 @if (Model[i].metacritic == null)
                 {
-                    <a>Not availabile</a>
+                    <p>Not Available</p>
                 }
                 else
                 {
                     @Model[i].metacritic
-                }
-                <br />
+                }<br />
             </td>
-
             <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
+
 
             <td>
                 <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
                     <input type="submit" class="btn-success" value="Add to Favorites" />
 
                 </form>
-
-
-
-
             </td>
 
 

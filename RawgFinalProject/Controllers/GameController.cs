@@ -31,20 +31,29 @@ namespace RawgFinalProject.Controllers
 
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> SearchGameByName(string searchName)
+        //{
+        //    string searchNameSlug = searchName;
+
+        //    var searchResult = await _gameDAL.GetGameByName(searchNameSlug);
+
+        //    List<Game> searchedGames = new List<Game>();
+
+        //    searchedGames.Add(searchResult);
+
+        //    AddToHistory(searchResult);
+
+        //    return View("SearchResults", searchedGames);
+
+        //}
+
         [HttpPost]
         public async Task<IActionResult> SearchGameByName(string searchName)
         {
-            string searchNameSlug = searchName;
+            List<Result> searchResult = await _gameDAL.GetGameSearch(searchName);
 
-            var searchResult = await _gameDAL.GetGameByName(searchNameSlug);
-
-            List<Game> searchedGames = new List<Game>();
-
-            searchedGames.Add(searchResult);
-
-            AddToHistory(searchResult);
-
-            return View("SearchResults", searchedGames);
+            return View("SearchResults", searchResult);
 
         }
 
@@ -110,15 +119,15 @@ namespace RawgFinalProject.Controllers
             
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteFavorite(int id)
         {
             string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var gameToDelete = _gameContext.UserFavorite.Find(id);
-            //UsersFavorite deleteItem = _context.UsersFavorite.Where(uf => uf.UserId == loginUserId && uf.FavoriteId == favoriteid).FirstOrDefault();
+            UserFavorite deleteItem = _gameContext.UserFavorite.Where(uf => uf.UserId == activeUserId && uf.GameId == id).FirstOrDefault();
 
-            if (gameToDelete != null)
+            if (deleteItem != null)
             {
-                _gameContext.UserFavorite.Remove(gameToDelete);
+                _gameContext.UserFavorite.Remove(deleteItem);
                 _gameContext.SaveChanges();
             }
 
