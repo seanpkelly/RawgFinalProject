@@ -41,8 +41,25 @@ namespace RawgFinalProject.Controllers
 
             searchedGames.Add(searchResult);
 
+            AddToHistory(searchResult);
+
             return View("SearchResults", searchedGames);
 
+        }
+
+        public void AddToHistory(Game addToHistory)
+        {
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            UserHistory h = new UserHistory();
+
+            h.GameId = addToHistory.id;
+            h.UserId = activeUserId;
+
+            if (ModelState.IsValid)
+            {
+                _gameContext.UserHistory.Add(h);
+                _gameContext.SaveChanges();
+            }
         }
 
         public async Task<IActionResult> AddToFavorites(int id)
