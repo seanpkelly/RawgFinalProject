@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RawgFinalProject.Models;
@@ -74,7 +75,13 @@ namespace RawgFinalProject.Controllers
             return View(convertList);
         }
 
-
+        public async Task<IActionResult> GameDetails(int id)
+        {
+           Game searchedGame = await SearchGameById(id);
+            AddToHistory(searchedGame);
+            return View(searchedGame);
+        }
+       
         public void AddToHistory(Game addToHistory)
         {
             string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -116,7 +123,6 @@ namespace RawgFinalProject.Controllers
                 return RedirectToAction("SearchResults");
             }
 
-            
         }
 
         public async Task<IActionResult> DeleteFavorite(int id)
@@ -134,13 +140,11 @@ namespace RawgFinalProject.Controllers
             return RedirectToAction("DisplayFavorites");
         }
 
-
         public async Task<Game> SearchGameById(int id)
         {
             var searchId = await _gameDAL.GetGameByName(id.ToString());
 
             return searchId;
         }
-
     }
 }

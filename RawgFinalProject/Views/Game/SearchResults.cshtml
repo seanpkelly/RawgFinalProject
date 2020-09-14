@@ -18,9 +18,9 @@
             </th>
         </tr>
         <tr class="thread-dark">
-
-            <td>@Model[i].name<br /></td>
-
+            <td> <a href="../Game/GameDetails?id=@Model[i].id" method="post">@Model[i].name<br /></a></td>
+           
+            
             <td>
                 @if (Model[i].metacritic == null)
                 {
@@ -31,7 +31,7 @@
                     @Model[i].metacritic
                 }<br />
             </td>
-            <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
+            <td><img src="@Model[i].background_image" style="width:400px;height:400px" /><br /></td>
 
 
             <td>
