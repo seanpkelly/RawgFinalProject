@@ -19,7 +19,7 @@ namespace RawgFinalProject.Controllers
         {
             _apiKey = configuration.GetSection("ApiKeys")["GameAPIKey"];
             _gameDAL = new GameDAL(_apiKey);
-            _gameContext = new GameRecommendationDbContext();
+            _gameContext = new GameRecommendationDbContext(configuration.GetConnectionString("AzureDbConnection"));
         }
 
         public async Task<IActionResult> Index()
@@ -64,19 +64,31 @@ namespace RawgFinalProject.Controllers
 
         public async Task<IActionResult> AddToFavorites(int id)
         {
-           string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             UserFavorite f = new UserFavorite();
 
-            f.GameId = id;
-            f.UserId = activeUserId;
+            UserFavorite duplicateTest = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.Id == id).FirstOrDefault();
 
-            if (ModelState.IsValid)
+            if (duplicateTest == null)
             {
-                _gameContext.UserFavorite.Add(f);
-                _gameContext.SaveChanges();
+                f.GameId = id;
+                f.UserId = activeUserId;
+
+                if (ModelState.IsValid)
+                {
+                    _gameContext.UserFavorite.Add(f);
+                    _gameContext.SaveChanges();
+                }
+
+                return RedirectToAction("DisplayFavorites");
             }
-          
-            return RedirectToAction("DisplayFavorites");
+            else
+            {
+                ViewBag.Error = "This game is already a favorite!";
+                return RedirectToAction("SearchResults");
+            }
+
+            
         }
 
         public async Task<IActionResult> Delete(int id)

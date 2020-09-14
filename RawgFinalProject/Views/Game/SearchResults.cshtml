@@ -37,37 +37,44 @@
                 {
                     @Model[i].metacritic
                 }
-            <br />
-        </td>
+                <br />
+            </td>
 
-        <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
+            <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
 
-        <td>
-            <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
-                <input type="submit" class="btn-success" value="Add to Favorites" />
+            <td>
+                <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
+                    <input type="submit" class="btn-success" value="Add to Favorites" />
 
-            </form>
-
-
-            
-            
-        </td>
-
-            
-        @*<td>
-                @if (!Model[i].isFavorite)
-                {
-                    ///put logic to do if statement for if somethign is already a favorite like in spicey index
-                }
-
-
-            </td>*@
+                </form>
 
 
 
 
+            </td>
 
-    </tr>
+
+            @*@if (!Model[i].isFavorite)
+            {
+        <form action="../SpiceyRecipe/AddToFavorites" method="post">
+            <input type="text" name="title" value="@Model[i].title" hidden />
+            <input type="text" name="href" value="@Model[i].href" hidden />
+            <input type="text" name="ingredients" value="@Model[i].ingredients" hidden />
+            <input type="text" name="thumbnail" value="@Model[i].thumbnail" hidden />
+            <input type="number" name="page" value="@Model[0].page" hidden />
+            <input type="submit" class="btn-success" value="Add To Favorites" />
+        </form> }
+                        else
+                        {
+        <a href="../Favorite/Index">This is already a favorite! Click here to go to see all of them!</a>                }*@
+
+
+
+
+
+
+
+        </tr>
 
 
 
