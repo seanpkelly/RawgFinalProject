@@ -61,5 +61,20 @@ namespace RawgFinalProject.Controllers
           
             return RedirectToAction("DisplayFavorites");
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var gameToDelete = _gameContext.UserFavorite.Find(id);
+            //UsersFavorite deleteItem = _context.UsersFavorite.Where(uf => uf.UserId == loginUserId && uf.FavoriteId == favoriteid).FirstOrDefault();
+
+            if (gameToDelete != null)
+            {
+                _gameContext.UserFavorite.Remove(gameToDelete);
+                _gameContext.SaveChanges();
+            }
+
+            return RedirectToAction("DisplayFavorites");
+        }
     }
 }
