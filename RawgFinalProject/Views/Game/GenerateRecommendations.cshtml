@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewData["Title"] = "GenerateRecommendations";
+}
+
+<h1>GenerateRecommendations</h1>
+
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    <table class="table table-hover table-info" style="table-layout:fixed">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Metacritic Score
+            </th>
+            <th>
+                Background Image
+            </th>
+            <th>
+                Recommendation Score
+            </th>
+
+        </tr>
+        <tr class="thread-dark">
+
+            <td> <a href="../Game/GameDetails?id=@Model[i].id" method="post">@Model[i].name<br /></a></td>
+
+            <td>
+                @if (Model[i].metacritic == null)
+                {
+                    <a>Not availabile</a>
+                }
+                else
+                {
+                    @Model[i].metacritic
+                }
+                <br />
+            </td>
+
+            <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
+
+            <td>
+                Recommendation Score HERE
+            </td>
+
+            @*<td>
+                <form action="../Game/DeleteFavorite?id=@Model[i].id" method="post">
+                    <input type="submit" class="btn-danger" value="Remove From Favorites" />
+                </form>
+            </td>*@
+
+        </tr>
+
+
+    </table>
+}

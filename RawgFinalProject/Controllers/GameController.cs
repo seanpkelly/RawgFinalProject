@@ -131,7 +131,7 @@ namespace RawgFinalProject.Controllers
             return searchId;
         }
 
-        public async Task<IActionResult> GenerateWeights()
+        public async Task<List<Dictionary<string,double>>> GenerateWeights()
         {
             string[] genres = { "Action", "Indie", "Adventure", "RPG", "Strategy", 
                 "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing", "Sports", 
@@ -153,6 +153,8 @@ namespace RawgFinalProject.Controllers
                 convertList.Add(await SearchGameById(favList[i].GameId));
             }
 
+
+
             Dictionary<string, int> genreCountDictionary = new Dictionary<string, int>();  //creates a prepopulates a dictionary to log how many occurences of each genre appear in users favorites
             foreach (var g in genres)
             {
@@ -164,6 +166,7 @@ namespace RawgFinalProject.Controllers
             {
                 tagCountDictionary.Add(t, 0);
             }
+
 
 
             foreach (Game game in convertList)  //populates tag and genre dictionaries with the number of occurences of each tag/genre for the game
@@ -191,29 +194,65 @@ namespace RawgFinalProject.Controllers
 
             }
 
-            int maxCount = genreCountDictionary.Values.Max();
 
-            genreCountDictionary = (Dictionary<string, int>)genreCountDictionary.OrderByDescending(i => i.Value);
+            int totalGenres = 0;
 
-
-
-            //We need to get a list of Genres/Tags for each weight level (5, 3, 2, 1, 0) so that we can apply the weighted score to the full database to get recommendations
-
-
-
-            List<string> maxWeightedGenre = new List<string>();
-
-            
-
-            foreach (string key in genreCountDictionary.Keys.ToList())
+            Dictionary<string, int> orderedGenreCount = new Dictionary<string, int>();
+            foreach (var item in genreCountDictionary.OrderByDescending(i => i.Value))
             {
-                if (genreCountDictionary[key] == maxCount)
-                {
-                    maxWeightedGenre.Add(key);
-                }
+                totalGenres += item.Value;
+                orderedGenreCount.Add(item.Key, item.Value);
             }
 
-            return View(genreCountDictionary);
+            Dictionary<string, double> weightedGenres = new Dictionary<string, double>();
+
+            foreach (var g in orderedGenreCount)
+            {
+                double value = Math.Round(((double)g.Value / (double)totalGenres),2);
+                weightedGenres.Add(g.Key, value);
+            }
+
+            //do the stuff for tags
+            int totalTags = 0;
+
+            Dictionary<string, int> orderedTagCount = new Dictionary<string, int>();
+            foreach (var item in tagCountDictionary.OrderByDescending(i => i.Value))
+            {
+                totalTags += item.Value;
+                orderedTagCount.Add(item.Key, item.Value);
+            }
+
+            Dictionary<string, double> weightedTags = new Dictionary<string, double>();
+
+            foreach (var g in orderedTagCount)
+            {
+                double value = Math.Round(((double)g.Value / (double)totalTags), 2);
+                weightedTags.Add(g.Key, value);
+            }
+
+            //send the weighted genre and tag dictionaries to the recommendations method
+
+            List<Dictionary<string, double>> genreAndTagDictionaries = new List<Dictionary<string, double>>();
+
+            genreAndTagDictionaries.Add(weightedGenres);
+            genreAndTagDictionaries.Add(weightedTags);
+
+            return genreAndTagDictionaries;
         }
+
+        public async Task<IActionResult> GenerateRecommendations()//List<Dictionary<string,double>> weights)
+        {
+            List<Dictionary<string, double>> weights = await GenerateWeights();  //obtains weighted genre and tag values to apply to our game list
+
+            //build api endpoint string and call List<Results> = GetGameListByGenreAndTag in DAL (foreach loops)
+            
+            //foreach loop the list of results and create the recommendation score (foreach through the recommended games and apply weighted scores as necessary)
+
+            //return list of recommended games to the recommendations view
+
+
+            return View("GenerateRecommendations"); //include list of recommended games as parameter
+        }
+
     }
 }
