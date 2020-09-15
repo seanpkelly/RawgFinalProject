@@ -7,6 +7,10 @@
 
 @model Dictionary<string, int>
 
+
+@ViewBag.pair
+
+
 @foreach (var key in Model.Keys)
 {
     <p>@key: @Model[key]</p>
