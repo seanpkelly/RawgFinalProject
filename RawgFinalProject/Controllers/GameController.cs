@@ -192,13 +192,10 @@ namespace RawgFinalProject.Controllers
             }
 
             int maxCount = genreCountDictionary.Values.Max();
-            
-            Dictionary<string, int> orderedGenreCount = new Dictionary<string, int>();
 
-            foreach (var item in genreCountDictionary.OrderByDescending(i => i.Value))
-            {
-                orderedGenreCount.Add(item.Key, item.Value);
-            }
+            genreCountDictionary = (Dictionary<string, int>)genreCountDictionary.OrderByDescending(i => i.Value);
+
+
 
             //We need to get a list of Genres/Tags for each weight level (5, 3, 2, 1, 0) so that we can apply the weighted score to the full database to get recommendations
 
@@ -216,7 +213,7 @@ namespace RawgFinalProject.Controllers
                 }
             }
 
-            return View(orderedGenreCount);
+            return View(genreCountDictionary);
         }
     }
 }
