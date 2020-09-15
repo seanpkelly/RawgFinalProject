@@ -152,43 +152,61 @@ namespace RawgFinalProject.Controllers
                 convertList.Add(await SearchGameById(favList[i].GameId));
             }
 
-            Dictionary<string, int> genreCountDictionary = new Dictionary<string, int>();
+            Dictionary<string, int> genreCountDictionary = new Dictionary<string, int>();  //creates a prepopulates a dictionary to log how many occurences of each genre appear in users favorites
             foreach (var g in genres)
             {
                 genreCountDictionary.Add(g, 0);
             }
 
-            //Dictionary<string, int> tagCountDictionary = new Dictionary<string, int>();
-
-            //loop thru convertlist, create dictionary before the loop, key = unique genre in convert list, value = count
-
-            List<int> counts = new List<int>();
-
-            foreach (Game game in convertList)
+            Dictionary<string, int> tagCountDictionary = new Dictionary<string, int>(); //creates a prepopulates a dictionary to log how many occurences of each tag appear in users favorites
+            foreach (var t in tags)
             {
-                foreach (string key in genreCountDictionary.Keys.ToList())
-                {
-                    if (key == game.genres[0].name)
-                    {
-                        genreCountDictionary[key] += 1;
-                    }
-                }
-                //foreach (var key in tagCountDictionary.Keys)
-                //{
-                //    if (key == game.tags[0].name)
-                //    {
-                //        tagCountDictionary[key] += 1;
-                //    }
-                //}
-                
+                tagCountDictionary.Add(t, 0);
             }
 
 
-            ViewBag.Genres = genreCountDictionary;
+            foreach (Game game in convertList)  //populates tag and genre dictionaries with the number of occurences of each tag/genre for the game
+            {
+                foreach (string key in genreCountDictionary.Keys.ToList())
+                {
+                    for (int i = 0; i < game.genres.Length; i++)
+                    {
+                        if (key == game.genres[i].name)
+                        {
+                            genreCountDictionary[key] += 1;
+                        }
+                    }
+                }
+                foreach (string key in tagCountDictionary.Keys.ToList())
+                {
+                    for (int i = 0; i < game.tags.Length; i++)
+                    {
+                        if (key == game.tags[i].name)
+                        {
+                            tagCountDictionary[key] += 1;
+                        }
+                    }
+                }
 
-            return View(genreCountDictionary);
+            }
+
+            int maxCount = genreCountDictionary.Values.Max();
+
+            //We need to get a list of Genres/Tags for each weight level (5, 3, 2, 1, 0) so that we can apply the weighted score to the full database to get recommendations
+
+            List<string> maxWeightedGenre = new List<string>();
 
             
+
+            foreach (string key in genreCountDictionary.Keys.ToList())
+            {
+                if (genreCountDictionary[key] == maxCount)
+                {
+                    maxWeightedGenre.Add(key);
+                }
+            }
+
+            return View(tagCountDictionary);
         }
     }
 }
