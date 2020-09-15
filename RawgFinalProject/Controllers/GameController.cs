@@ -191,6 +191,20 @@ namespace RawgFinalProject.Controllers
             }
 
             int maxCount = genreCountDictionary.Values.Max();
+            //int threePointCount = 0;
+            //int twoPointCount = 0;
+            //int onePointCount = 0;
+
+            //foreach (string key in genreCountDictionary.Keys.ToList())
+            //{
+            //    if (genreCountDictionary[key] < maxCount && genreCountDictionary[key] > threePointCount)
+            //    {
+            //        threePointCount = genreCountDictionary[key];
+            //    }
+            //}
+
+
+
 
             //We need to get a list of Genres/Tags for each weight level (5, 3, 2, 1, 0) so that we can apply the weighted score to the full database to get recommendations
 
