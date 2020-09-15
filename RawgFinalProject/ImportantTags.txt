@@ -1,0 +1,40 @@
+﻿Singleplayer
+Multiplayer
+Atmospheric
+Great Soundtrack
+RPG
+Co-op
+Story Rich
+Open World
+cooperative
+First-Person
+Sci-fi
+2D
+Third Person
+FPS
+Horror
+Fantasy
+Comedy
+Sandbox
+Survival
+Exploration
+Stealth
+Tactical
+Pixel Graphics
+Action RPG
+Retro
+Space
+Zombies
+Point & Click
+Action-Adventure
+Hack and Slash
+Side Scroller
+Survival Horror
+RTS
+Roguelike
+mmo
+Driving
+Puzzle
+MMORPG
+Management
+JRPG

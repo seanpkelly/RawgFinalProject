@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "GenerateWeights";
+}
+
+<h1>GenerateWeights</h1>
+
+@model Dictionary<string, int>
+
+@foreach (var key in Model.Keys)
+{
+    <p>@key @Model[key]</p>
+    <p>@Model[key]</p>
+}
+
+@*@foreach (var key in ViewBag.Genres)
+{
+
+}*@

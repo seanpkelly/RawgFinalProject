@@ -32,23 +32,6 @@ namespace RawgFinalProject.Controllers
 
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> SearchGameByName(string searchName)
-        //{
-        //    string searchNameSlug = searchName;
-
-        //    var searchResult = await _gameDAL.GetGameByName(searchNameSlug);
-
-        //    List<Game> searchedGames = new List<Game>();
-
-        //    searchedGames.Add(searchResult);
-
-        //    AddToHistory(searchResult);
-
-        //    return View("SearchResults", searchedGames);
-
-        //}
-
         [HttpPost]
         public async Task<IActionResult> SearchGameByName(string searchName)
         {
@@ -145,6 +128,67 @@ namespace RawgFinalProject.Controllers
             var searchId = await _gameDAL.GetGameByName(id.ToString());
 
             return searchId;
+        }
+
+        public async Task<IActionResult> GenerateWeights()
+        {
+            string[] genres = { "Action", "Indie", "Adventure", "RPG", "Strategy", 
+                "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing", "Sports", 
+                "Massively Multiplayer", "Family", "Fighting", "Board Game", "Educational", "Card" };
+
+            string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi", 
+                "2D", "Third Person", "FPS", "Horror", "Fantasy", "Comedy", "Sandbox", "Survival", "Exploration", "Stealth", "Tactical", "Pixel Graphics", "Action RPG", "Retro",
+                "Space", "Zombies", "Point & Click", "Action-Adventure", "Hack and Slash", "Side Scroller", "Survival Horror", "RTS", "Roguelike", "mmo", "Driving", "Puzzle",
+                "MMORPG", "Management", "JRPG" };
+
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //Creates list of favorites for the current user
+            var favList = await _gameContext.UserFavorite.Where(x => x.UserId == activeUserId).ToListAsync();
+
+            List<Game> convertList = new List<Game>();
+
+            for (int i = 0; i < favList.Count; i++)
+            {
+                convertList.Add(await SearchGameById(favList[i].GameId));
+            }
+
+            Dictionary<string, int> genreCountDictionary = new Dictionary<string, int>();
+            foreach (var g in genres)
+            {
+                genreCountDictionary.Add(g, 0);
+            }
+
+            //Dictionary<string, int> tagCountDictionary = new Dictionary<string, int>();
+
+            //loop thru convertlist, create dictionary before the loop, key = unique genre in convert list, value = count
+
+            List<int> counts = new List<int>();
+
+            foreach (Game game in convertList)
+            {
+                foreach (string key in genreCountDictionary.Keys.ToList())
+                {
+                    if (key == game.genres[0].name)
+                    {
+                        genreCountDictionary[key] += 1;
+                    }
+                }
+                //foreach (var key in tagCountDictionary.Keys)
+                //{
+                //    if (key == game.tags[0].name)
+                //    {
+                //        tagCountDictionary[key] += 1;
+                //    }
+                //}
+                
+            }
+
+
+            ViewBag.Genres = genreCountDictionary;
+
+            return View(genreCountDictionary);
+
+            
         }
     }
 }
