@@ -265,7 +265,7 @@ namespace RawgFinalProject.Controllers
             }
 
             //build api endpoint string and call List<Results> = GetGameListByGenreAndTag in DAL (foreach loops)
-            List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
+            List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page_size=5");
 
             List<Game> recommendationGamePool = new List<Game>();
 
