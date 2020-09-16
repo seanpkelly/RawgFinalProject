@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -288,20 +289,46 @@ namespace RawgFinalProject.Controllers
                 {
                     genreRecScore += weights[0][genre.name];
                 }
-                //foreach (var tag in game.tags)
-                //{
-                //    tagRecScore += weights[1][tag.name];
-                //}
-                totalRecScore = (genreRecScore + tagRecScore) * 10;
+
+                foreach (Tag tag in game.tags)
+                {
+                    bool containsKey = weights[1].ContainsKey(tag.name.ToString());
+                    if (containsKey == true)
+                    {
+                        tagRecScore += weights[1][tag.name];
+                    }
+                }
+
+                totalRecScore = Math.Round((genreRecScore * 5) + (tagRecScore * 5),2);
+
                 gameRecs.Add(new RecommendedGame(game.id, totalRecScore));
+
             }
+
+            List<RecommendedGame> orderedRecs = new List<RecommendedGame>();
+
+            foreach (var item in gameRecs.OrderByDescending(i => i.recommendationScore))
+            {
+                orderedRecs.Add(item);
+            }
+
+            List<Game> orderedGameRecs = new List<Game>();
+
+            for (int i = 0; i < orderedRecs.Count; i++)
+            {
+                orderedGameRecs.Add(await SearchGameById(orderedRecs[i].id));
+                orderedGameRecs[i].recommendationScore = orderedRecs[i].recommendationScore;
+            }
+
+
+
 
             //return list of recommended games to the recommendations view
 
             //api example:
             //https://api.rawg.io/api/games?genres=action,rpg,adventure,sports,indie,simulation&tags=singleplayer
 
-            return View("GenerateRecommendations", recommendationResultPool); //include list of recommended games as parameter
+            return View("GenerateRecommendations", orderedGameRecs); //include list of recommended games as parameter
         }
 
     }

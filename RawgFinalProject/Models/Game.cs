@@ -62,6 +62,7 @@ namespace RawgFinalProject.Models
         public object esrb_rating { get; set; }
         public object clip { get; set; }
         public string description_raw { get; set; }
+        public double recommendationScore { get; set; }
     }
 
     public class Reactions
