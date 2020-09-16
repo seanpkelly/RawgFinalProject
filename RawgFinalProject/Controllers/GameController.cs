@@ -244,14 +244,64 @@ namespace RawgFinalProject.Controllers
         {
             List<Dictionary<string, double>> weights = await GenerateWeights();  //obtains weighted genre and tag values to apply to our game list
 
+            //genres = action,rpg,adventure,sports,indie,simulation & tags = singleplayer
+            string genreQuery = "";
+            foreach (string key in weights[0].Keys.ToList())
+            {
+                if (weights[0][key] != 0)
+                {
+                    genreQuery += key.ToLower() + ",";
+                }
+            }
+
+            string tagQuery = "";
+            foreach (string key in weights[1].Keys.ToList())
+            {
+                if (weights[1][key] != 0)
+                {
+                    tagQuery += key.ToLower() + ",";
+                }
+            }
+
             //build api endpoint string and call List<Results> = GetGameListByGenreAndTag in DAL (foreach loops)
-            
+            List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
+
+            List<Game> recommendationGamePool = new List<Game>();
+
+            for (int i = 0; i < recommendationResultPool.Count; i++)
+            {
+                recommendationGamePool.Add(await SearchGameById(recommendationResultPool[i].id));
+            }
+
+            double genreRecScore = 0; 
+            double tagRecScore = 0;
+            double totalRecScore = 0;
+            List<RecommendedGame> gameRecs = new List<RecommendedGame>();
+
             //foreach loop the list of results and create the recommendation score (foreach through the recommended games and apply weighted scores as necessary)
+            foreach (Game game in recommendationGamePool)
+            {
+                genreRecScore = 0;
+                tagRecScore = 0;
+                totalRecScore = 0;
+                foreach (Genre genre in game.genres)
+                {
+                    genreRecScore += weights[0][genre.name];
+                }
+                //foreach (var tag in game.tags)
+                //{
+                //    tagRecScore += weights[1][tag.name];
+                //}
+                totalRecScore = (genreRecScore + tagRecScore) * 10;
+                gameRecs.Add(new RecommendedGame(game.id, totalRecScore));
+            }
 
             //return list of recommended games to the recommendations view
 
+            //api example:
+            //https://api.rawg.io/api/games?genres=action,rpg,adventure,sports,indie,simulation&tags=singleplayer
 
-            return View("GenerateRecommendations"); //include list of recommended games as parameter
+            return View("GenerateRecommendations", recommendationResultPool); //include list of recommended games as parameter
         }
 
     }
