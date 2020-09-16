@@ -134,12 +134,14 @@ namespace RawgFinalProject.Controllers
         #region Recommendation Generation Station
         public async Task<List<Dictionary<string,double>>> GenerateWeights()
         {
+            //test genre names
             //Entire array of genres in API
             string[] genres =
                 { "Action", "Indie", "Adventure", "RPG", "Strategy", 
                 "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing",
                 "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Game", "Educational", "Card" };
 
+            //test tag names
             //Selected array of tags in API
             string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi", 
                 "2D", "Third Person", "FPS", "Horror", "Fantasy", "Comedy", "Sandbox", "Survival", "Exploration", "Stealth", "Tactical", "Pixel Graphics", "Action RPG", "Retro",
@@ -264,7 +266,22 @@ namespace RawgFinalProject.Controllers
             }
 
             //This into method?
-            List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
+
+            List<Result> singlePageResults = new List<Result>();
+            List<Result> recommendationResultPool = new List<Result>();
+
+            for (int i = 1; i < 5; i++)
+            {
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+
+                foreach (var result in singlePageResults)
+                {
+                    recommendationResultPool.Add(result);
+                }
+            }
+
+
+            //List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
             List<Game> recommendationGamePool = new List<Game>();
             //Turn this into method?
             for (int i = 0; i < recommendationResultPool.Count; i++)
@@ -292,7 +309,7 @@ namespace RawgFinalProject.Controllers
                     }
                 }
 
-                totalRecScore = Math.Round((genreRecScore * 5) + (tagRecScore * 5),2);
+                totalRecScore = Math.Round((genreRecScore * 7) + (tagRecScore * 3),2);
                 gameRecs.Add(new RecommendedGame(game.id, totalRecScore));
 
             }
