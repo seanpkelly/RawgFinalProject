@@ -24,18 +24,4 @@ namespace RawgFinalProject.Models
         public string score { get; set; }
         public string background_image { get; set; }
     }
-
-
-
-    public class Rootobject
-    {
-        public int count { get; set; }
-        public string next { get; set; }
-        public object previous { get; set; }
-        public Result[] results { get; set; }
-        public bool user_platforms { get; set; }
-    }
-
-
-
 }

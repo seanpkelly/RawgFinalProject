@@ -55,7 +55,7 @@ namespace RawgFinalProject.Controllers
 
         public async Task<IActionResult> GameDetails(int id)
         {
-           Game searchedGame = await SearchGameById(id);
+            Game searchedGame = await SearchGameById(id);
 
             AddToHistory(searchedGame);
             return View(searchedGame);
@@ -71,14 +71,25 @@ namespace RawgFinalProject.Controllers
             //Creates list of favorites for the current user
             var favList = await _gameContext.UserFavorite.Where(x => x.UserId == activeUserId).ToListAsync();
 
-            List<Game> convertList = new List<Game>();
+            List<Game> convertedFavoritesList = new List<Game>();
 
             for (int i = 0; i < favList.Count; i++)
             {
-                convertList.Add(await SearchGameById(favList[i].GameId));
+                convertedFavoritesList.Add(await SearchGameById(favList[i].GameId));
             }
 
-            return View(convertList);
+            //return View(convertedFavoritesList);
+
+            var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
+            List<Game> convertedHistoryList = new List<Game>();
+            for (int i = 0; i < favList.Count; i++)
+            {
+                convertedHistoryList.Add(await SearchGameById(favList[i].GameId));
+            }
+            List<List<Game>> favesAndHistory = new List<List<Game>>();
+            favesAndHistory.Add(convertedFavoritesList);
+            favesAndHistory.Add(convertedHistoryList);
+            return View(favesAndHistory);
         }
 
         public IActionResult AddToFavorites(int id)
@@ -88,14 +99,16 @@ namespace RawgFinalProject.Controllers
 
             UserFavorite f = new UserFavorite();
 
-            //CheckForDupes does not work
-            UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.Id == id).FirstOrDefault();
+            f.GameId = id;
+            f.UserId = activeUserId;
+
+            //add code to remove game from history list if its added to favorites
+
+            //check for dupes does not throw an error message or return to search results correctly yet
+            UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
 
             if (checkForDupes == null)
             {
-                f.GameId = id;
-                f.UserId = activeUserId;
-
                 if (ModelState.IsValid)
                 {
                     _gameContext.UserFavorite.Add(f);
@@ -154,12 +167,20 @@ namespace RawgFinalProject.Controllers
             //Creates list of favorites for the current user
             var favList = await _gameContext.UserFavorite.Where(x => x.UserId == activeUserId).ToListAsync();
 
+
+
+            DateTime time1 = DateTime.Now;
+            
             List<Game> convertList = new List<Game>();
 
-            for (int i = 0; i < favList.Count; i++)
+            for (int i = 0; i < favList.Count; i++) //8 seconds
             {
                 convertList.Add(await SearchGameById(favList[i].GameId));
             }
+
+            DateTime time2 = DateTime.Now;
+
+
 
 
             //creates a prepopulates a dictionary to log how many occurences of each genre appear in users favorites
@@ -199,7 +220,6 @@ namespace RawgFinalProject.Controllers
                         }
                     }
                 }
-
             }
 
             //Variables for sorting by genre.count and applying weights to each genre
@@ -270,7 +290,7 @@ namespace RawgFinalProject.Controllers
             List<Result> singlePageResults = new List<Result>();
             List<Result> recommendationResultPool = new List<Result>();
 
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < 2; i++)  //took 5 seconds or so
             {
                 singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
 
@@ -281,13 +301,21 @@ namespace RawgFinalProject.Controllers
             }
 
 
+
+
+            DateTime time4 = DateTime.Now;
+
             //List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
-            List<Game> recommendationGamePool = new List<Game>();
+            List<Game> recommendationGamePool = new List<Game>();  //check this one out - took 1 min to run
             //Turn this into method?
-            for (int i = 0; i < recommendationResultPool.Count; i++)
+            for (int i = 0; i < recommendationResultPool.Count; i++) //calls api 80 times (5 pages of results)
             {
                 recommendationGamePool.Add(await SearchGameById(recommendationResultPool[i].id));
             }
+
+            DateTime time5 = DateTime.Now;
+
+
 
 
             //Calculate score through genres and tags present in Favorites List
@@ -321,13 +349,22 @@ namespace RawgFinalProject.Controllers
                 orderedRecs.Add(item);
             }
 
+
+
+
+            DateTime time7 = DateTime.Now;
+
             //Calls API to convert recommendations into Game objects
-            List<Game> orderedGameRecs = new List<Game>();
+            List<Game> orderedGameRecs = new List<Game>(); //took 1 minute to run
             for (int i = 0; i < orderedRecs.Count; i++)
             {
                 orderedGameRecs.Add(await SearchGameById(orderedRecs[i].id));
                 orderedGameRecs[i].recommendationScore = orderedRecs[i].recommendationScore;
             }
+
+            DateTime time8 = DateTime.Now;
+
+
 
             return View("GenerateRecommendations", orderedGameRecs);
         }
@@ -346,6 +383,24 @@ namespace RawgFinalProject.Controllers
                 _gameContext.UserHistory.Add(h);
                 _gameContext.SaveChanges();
             }
+        }
+
+        public async Task<IActionResult> DisplayHistory()
+        {
+            //Turn into method call: CallIdString
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            //Creates list of history for the current user
+            var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
+
+            List<Game> convertList = new List<Game>();
+
+            for (int i = 0; i < historyList.Count; i++)
+            {
+                convertList.Add(await SearchGameById(historyList[i].GameId));
+            }
+
+            return View("DisplayHistory", convertList);
         }
 
     }
