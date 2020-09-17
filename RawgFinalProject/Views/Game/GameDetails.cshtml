@@ -4,43 +4,68 @@
 
 @model Game
 
+<h2>@Model.name</h2>
+
+<p>Game Description: @Model.description_raw</p>
+
+<p>Metacritic Score: @Model.metacritic</p>
+
+<p>Release Date: @Model.released</p>
+
+<p>Playtime: @Model.playtime</p>
+
 <p>
-    <h2>@Model.name</h2>
-</p>
-<p>
-    <h2>@Model.description_raw</h2>
-</p>
-<p>@Model.metacritic</p>
-<p>@Model.released</p>
-<p>@Model.playtime</p>
-<p>
+    Platforms:
     @for (int i = 0; i < Model.platforms.Length; i++)
-    {
-        @Model.platforms[i].platform.name;
-    }
+        if (i < Model.platforms.Length - 1)
+        {
+            @($"{Model.platforms[i].platform.name}, ")
+        }
+        else
+        {
+            @($"{Model.platforms[i].platform.name}")
+        }
 </p>
+
 <p>
+    Developers:
     @for (int i = 0; i < Model.developers.Length; i++)
-    {
-        @Model.developers[i].name;
-    }
-
+        if (i < Model.developers.Length - 1)
+        {
+        @($"{Model.developers[i].name}, ")
+        }
+        else
+        {
+        @($"{Model.developers[i].name}")
+        }
 </p>
+
 <p>
+    Publishers:
     @for (int i = 0; i < Model.publishers.Length; i++)
-    {
-        @Model.publishers[i].name;
-    }
-
+        if (i < Model.publishers.Length - 1)
+        {
+        @($"{Model.publishers[i].name}, ")
+        }
+        else
+        {
+        @($"{Model.publishers[i].name}")
+        }
 </p>
+
 <p>
+    Tags:
     @for (int i = 0; i < Model.tags.Length; i++)
-    {
-        @Model.tags[i].name;
-    }
-
+        if (i < Model.tags.Length - 1)
+        {
+        @($"{Model.tags[i].name}, ")
+        }
+        else
+        {
+        @($"{Model.tags[i].name}")
+        }
 </p>
-<p>@Model.esrb_rating</p>
+
+<p>ESRB Rating: @Model.esrb_rating</p>
+
 <p>@Model.clip</p>
-
-
