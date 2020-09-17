@@ -4,6 +4,21 @@
 
 @model List<List<Game>>
 
+<h2>Favorite Games!</h2>
+@if (Model[0].Count < 5)
+{
+    <p>Please add at least five games to your favorites list to be able to generate recommendations!</p>
+}
+else
+{
+    <td>
+        
+        <form action="../Game/GameRecommendations" method="post">
+            <input type="submit" class="btn-success" value="Get Recommendations!" />
+        </form>
+    </td>
+    @*<a href="../Game/GenerateRecommendations" class="btn-success"> Get Recommendations!</a>*@
+}
 @for (int i = 0; i < Model[0].Count; i++)
 {
     <table class="table table-hover table-info" style="table-layout:fixed">
@@ -49,7 +64,12 @@
 
 }
 
-<p>We see you've viewed the details of these games as well. Would you like to add them to your favorites?</p>
+
+
+@*this table is wrong, the actual top button for Search History is the correct logic *@
+<br />
+<h4>We see you've viewed the details of these games as well.<br /> Would you like to add them to your favorites?</h4>
+<br />
 @for (int i = 0; i < Model[1].Count; i++)
 {
     <table class="table table-hover table-info" style="table-layout:fixed;width:50%">
@@ -65,8 +85,8 @@
         <tr class="thread-dark">
 
             <td> <a href="../Game/GameDetails?id=@Model[1][i].id" method="post">@Model[1][i].name<br /></a></td>
-            
-            <td><img src="@Model[1][i].background_image" style="width:50px;height:50px" /><br /></td>
+
+            <td><img src="@Model[1][i].background_image" style="width:100px;height:100px" /><br /></td>
 
             <td>
                 <form action="../Game/AddToFavorites?id=@Model[1][i].id" method="post">

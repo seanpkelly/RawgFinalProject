@@ -82,9 +82,9 @@ namespace RawgFinalProject.Controllers
 
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
             List<Game> convertedHistoryList = new List<Game>();
-            for (int i = 0; i < favList.Count; i++)
+            for (int i = 0; i < historyList.Count; i++)
             {
-                convertedHistoryList.Add(await SearchGameById(favList[i].GameId));
+                convertedHistoryList.Add(await SearchGameById(historyList[i].GameId));
             }
             List<List<Game>> favesAndHistory = new List<List<Game>>();
             favesAndHistory.Add(convertedFavoritesList);
