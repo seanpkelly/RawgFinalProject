@@ -19,7 +19,7 @@ namespace RawgFinalProject.Models
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://rawg-video-games-database.p.rapidapi.com");
             client.DefaultRequestHeaders.Add("X-RapidAPI-Key", _apiKey);
-            
+            client.DefaultRequestHeaders.Add("User-Agent", "Game Recommendation Station");
             return client;
         }
 

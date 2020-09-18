@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "DisplayFavorites";
+    ViewData["Title"] = "Display Favorites";
 }
 
 @model List<List<Game>>
@@ -11,13 +11,13 @@
 }
 else
 {
-    @*<td>
-        
-        <form action="../Game/GameRecommendations" method="post">
+
+    <td>
+        <form action="../Game/GenerateRecommendations" method="post">
             <input type="submit" class="btn-success" value="Get Recommendations!" />
         </form>
-    </td>*@
-    <a href="../Game/generateRecommendations" class="btn-success"> Get Recommendations!</a>
+    </td>
+
 }
 @for (int i = 0; i < Model[0].Count; i++)
 {
@@ -32,11 +32,12 @@ else
             <th>
                 Background Image
             </th>
-
         </tr>
         <tr class="thread-dark">
 
-            <td> <a href="../Game/GameDetails?id=@Model[0][i].id" method="post">@Model[0][i].name<br /></a></td>
+            <td> 
+                <a href="../Game/GameDetails?id=@Model[0][i].id" method="post">@Model[0][i].name<br /></a>
+            </td>
 
             <td>
                 @if (Model[0][i].metacritic == null)
@@ -50,23 +51,19 @@ else
                 <br />
             </td>
 
-            <td><img src="@Model[0][i].background_image" style="width:200px;height:200px" /><br /></td>
+            <td>
+                <img src="@Model[0][i].background_image" style="width:200px;height:200px" /><br />
+            </td>
 
             <td>
                 <form action="../Game/DeleteFavorite?id=@Model[0][i].id" method="post">
                     <input type="submit" class="btn-danger" value="Remove From Favorites" />
                 </form>
             </td>
-
         </tr>
-
     </table>
-
 }
 
-
-
-@*this table is wrong, the actual top button for Search History is the correct logic *@
 <br />
 <h4>We see you've viewed the details of these games as well.<br /> Would you like to add them to your favorites?</h4>
 <br />
@@ -80,22 +77,22 @@ else
             <th>
                 Background Image
             </th>
-
         </tr>
         <tr class="thread-dark">
 
-            <td> <a href="../Game/GameDetails?id=@Model[1][i].id" method="post">@Model[1][i].name<br /></a></td>
+            <td>
+                <a href="../Game/GameDetails?id=@Model[1][i].id" method="post">@Model[1][i].name<br /></a>
+            </td>
 
-            <td><img src="@Model[1][i].background_image" style="width:100px;height:100px" /><br /></td>
+            <td>
+                <img src="@Model[1][i].background_image" style="width:100px;height:100px" /><br />
+            </td>
 
             <td>
                 <form action="../Game/AddToFavorites?id=@Model[1][i].id" method="post">
                     <input type="submit" class="btn-success" value="Add to Favorites" />
                 </form>
             </td>
-
         </tr>
-
     </table>
-
 }
