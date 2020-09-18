@@ -1,23 +1,19 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Protocols;
 
 namespace RawgFinalProject.Models
 {
     public partial class GameRecommendationDbContext : DbContext
     {
         private readonly string connectionString;
-
-        public GameRecommendationDbContext()
-        {
-
-        }
-
         public GameRecommendationDbContext(string _connectionString)
         {
             connectionString = _connectionString;
+        }
+
+        public GameRecommendationDbContext()
+        {
         }
 
         public GameRecommendationDbContext(DbContextOptions<GameRecommendationDbContext> options)
@@ -174,6 +170,8 @@ namespace RawgFinalProject.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.GameId).HasColumnName("GameID");
+
+                entity.Property(e => e.GameName).HasMaxLength(300);
 
                 entity.Property(e => e.UserId).HasMaxLength(450);
 
