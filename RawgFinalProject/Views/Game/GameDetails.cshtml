@@ -14,7 +14,7 @@
 
 <p>Playtime: @Model.playtime</p>
 
-@*<p>
+<p>
     Platforms:
     @for (int i = 0; i < Model.platforms.Length; i++)
         if (i < Model.platforms.Length - 1)
@@ -32,11 +32,11 @@
     @for (int i = 0; i < Model.developers.Length; i++)
         if (i < Model.developers.Length - 1)
         {
-        @($"{Model.developers[i].name}, ")
+            @($"{Model.developers[i].name}, ")
         }
         else
         {
-        @($"{Model.developers[i].name}")
+            @($"{Model.developers[i].name}")
         }
 </p>
 
@@ -45,11 +45,11 @@
     @for (int i = 0; i < Model.publishers.Length; i++)
         if (i < Model.publishers.Length - 1)
         {
-        @($"{Model.publishers[i].name}, ")
+            @($"{Model.publishers[i].name}, ")
         }
         else
         {
-        @($"{Model.publishers[i].name}")
+            @($"{Model.publishers[i].name}")
         }
 </p>
 
@@ -58,14 +58,25 @@
     @for (int i = 0; i < Model.tags.Length; i++)
         if (i < Model.tags.Length - 1)
         {
-        @($"{Model.tags[i].name}, ")
+            @($"{Model.tags[i].name}, ")
         }
         else
         {
-        @($"{Model.tags[i].name}")
+            @($"{Model.tags[i].name}")
         }
-</p>*@
+</p>
 
-<p>ESRB Rating: @Model.esrb_rating</p>
+@if (Model.esrb_rating != null)
+{
+    <p>ESRB Rating: @Model.esrb_rating.name</p>
+}
+@if (Model.clip != null)
+{
+<video width="320" height="240" controls autoplay muted>
+    <source src="@Model.clip.clips.full" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+}
 
-<p>@Model.clip</p>
+
+
