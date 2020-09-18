@@ -101,7 +101,7 @@ namespace RawgFinalProject.Controllers
             favesAndHistory.Add(convertedHistoryList);
             return View(favesAndHistory);
         }
-        //Scaffold-DbContext "Server=tcp:rawg-api-server.database.windows.net,1433;Initial Catalog=GameRecommendationDb;Persist Security Info=False;User ID=rawg-api-admin;Password=C#Final123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+        
         public IActionResult AddToFavorites(int id)
         {
             //Turn into method call: CallIdString
@@ -162,7 +162,7 @@ namespace RawgFinalProject.Controllers
             string[] genres =
                 { "Action", "Indie", "Adventure", "RPG", "Strategy", 
                 "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing",
-                "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Game", "Educational", "Card" };
+                "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Games", "Educational", "Card" };
 
             //test tag names
             //Selected array of tags in API
@@ -293,9 +293,10 @@ namespace RawgFinalProject.Controllers
             SearchResult singlePageResults = new SearchResult();
             List<Result> recommendationResultPool = new List<Result>();
 
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < 20; i++)
             {
-                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                //singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres=sports&page={i}");
 
                 foreach (var result in singlePageResults.results)
                 {
