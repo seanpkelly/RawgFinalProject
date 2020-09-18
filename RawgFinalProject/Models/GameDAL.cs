@@ -71,5 +71,6 @@ namespace RawgFinalProject.Models
 
             return searchedGames;
         }
+
     }
 }

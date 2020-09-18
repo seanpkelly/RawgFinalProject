@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ namespace RawgFinalProject.Controllers
 
         #region Search for Games
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SearchGameByName(string searchName)
         {
@@ -52,49 +54,46 @@ namespace RawgFinalProject.Controllers
                     searchResult.results[i].isfavorite = true;
                 }
             }
-            //for (var result in searchResult.results)
-            //{
-            //    UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
-            //    if (checkForDupes != null)
-            //    {
-            //        result.isfavorite = true;
-            //    }
-            //}
+
+            ViewBag.Header = $"Results for {searchName}";
+
             return View("SearchResults", searchResult);
 
         }
-        //public async Task<IActionResult> SearchResultByName(string searchName)
-        //{
-        //    SearchResult searchResult = await _gameDAL.GetGameSearch(searchName);
-
-        //    string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        //    foreach (var result in searchResult.results)
-        //    {
-        //        UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
-        //        if (checkForDupes != null)
-        //        {
-        //            result.isfavorite = true;
-        //        }
-
-        //    }
-       
-
-        //    return View("SearchResults", searchResult);
-
-        //}
-
+        [Authorize]
         public async Task<Result> SearchResultById(int id)
         {
             var searchId = await _gameDAL.GetResultByName(id.ToString());
             return searchId;
         }
-
+        [Authorize]
         public async Task<Game> SearchGameById(int id)
         {
             var searchId = await _gameDAL.GetGameByName(id.ToString());
             return searchId;
         }
+        [Authorize]
+        public async Task<IActionResult> GetGameByDeveloper(string id)
+        {
+            string query = $"developers={id}";
+            var searchId = await _gameDAL.GetGameListByGenreAndTag(query);
+
+            ViewBag.Header = "More Games from this Developer: ";
+
+            return View("SearchResults", searchId);
+        }
+        [Authorize]
+        public async Task<IActionResult> GetGameByPublisher(string id)
+        {
+            string query = $"publishers={id}";
+            var searchId = await _gameDAL.GetGameListByGenreAndTag(query);
+
+            ViewBag.Header = "More Games from this Publisher: ";
+
+            return View("SearchResults", searchId);
+        }
+
+        [Authorize]
         public async Task<IActionResult> GameDetails(int id)
         {
             Result searchedGame = await SearchResultById(id);
@@ -107,6 +106,7 @@ namespace RawgFinalProject.Controllers
         #endregion
 
         #region Favorites CRUD
+        [Authorize]
         public async Task<IActionResult> DisplayFavorites()
         {
             //Turn into method call: CallIdString
@@ -117,35 +117,28 @@ namespace RawgFinalProject.Controllers
 
             List<Result> convertedFavoritesList = new List<Result>();
 
-            DateTime time1 = DateTime.Now;
-
             for (int i = 0; i < favList.Count; i++)
             {
                 convertedFavoritesList.Add(await SearchResultById(favList[i].GameId));
             }
 
-            DateTime time2 = DateTime.Now;
-
-            //return View(convertedFavoritesList);
-
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
             List<Result> convertedHistoryList = new List<Result>();
 
-            DateTime time3 = DateTime.Now;
 
             for (int i = 0; i < historyList.Count; i++)
             {
                 convertedHistoryList.Add(await SearchResultById(historyList[i].GameId));
             }
 
-            DateTime time4 = DateTime.Now;
 
             List<List<Result>> favesAndHistory = new List<List<Result>>();
             favesAndHistory.Add(convertedFavoritesList);
             favesAndHistory.Add(convertedHistoryList);
             return View(favesAndHistory);
         }
-        
+
+        [Authorize]
         public IActionResult AddToFavorites(int id)
         {
             //Turn into method call: CallIdString
@@ -180,6 +173,7 @@ namespace RawgFinalProject.Controllers
 
         }
 
+        [Authorize]
         public IActionResult DeleteFavorite(int id)
         {
             //Turn into method call: CallIdString
@@ -200,6 +194,8 @@ namespace RawgFinalProject.Controllers
         #endregion
 
         #region Recommendation Generation Station
+
+        [Authorize]
         public async Task<List<Dictionary<string,double>>> GenerateWeights()
         {
             //test genre names
@@ -310,6 +306,7 @@ namespace RawgFinalProject.Controllers
             return genreAndTagDictionaries;
         }
 
+        [Authorize]
         public async Task<IActionResult> GenerateRecommendations()
         {
             //obtains weighted genre and tag values to apply to game list
@@ -382,8 +379,6 @@ namespace RawgFinalProject.Controllers
                 orderedRecs.Add(item);
             }
 
-
-
             return View("GenerateRecommendations", orderedRecs);
         }
         #endregion
@@ -403,6 +398,7 @@ namespace RawgFinalProject.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> DisplayHistory()
         {
             //Turn into method call: CallIdString
