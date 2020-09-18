@@ -32,7 +32,7 @@
     @for (int i = 0; i < Model.developers.Length; i++)
         if (i < Model.developers.Length - 1)
         {
-            <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" method="post"> @($"{Model.developers[i].name}, ")</a>
+    <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" method="post"> @($"{Model.developers[i].name}")</a><span>,&nbsp</span>
         }
         else
         {
@@ -45,7 +45,7 @@
     @for (int i = 0; i < Model.publishers.Length; i++)
         if (i < Model.publishers.Length - 1)
         {
-            <a href="../Game/GetGameByPublisher?id=@Model.publishers[i].id" method="post">  @($"{Model.publishers[i].name}, ")</a>
+            <a href="../Game/GetGameByPublisher?id=@Model.publishers[i].id" method="post">  @($"{Model.publishers[i].name}")</a><span>,&nbsp</span>
         }
         else
         {
