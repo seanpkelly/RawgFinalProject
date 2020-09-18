@@ -24,7 +24,7 @@ namespace RawgFinalProject.Models
         public float rating { get; set; }
         public int rating_top { get; set; }
         public Rating[] ratings { get; set; }
-        public Reactions reactions { get; set; }
+        //public Reactions reactions { get; set; }
         public int added { get; set; }
         public Added_By_Status added_by_status { get; set; }
         public int playtime { get; set; }
@@ -55,128 +55,128 @@ namespace RawgFinalProject.Models
         public Parent_Platforms[] parent_platforms { get; set; }
         public Platform1[] platforms { get; set; }
         public Store[] stores { get; set; }
-        public Developer[] developers { get; set; }
+        //public Developer[] developers { get; set; }
         public Genre[] genres { get; set; }
         public Tag[] tags { get; set; }
-        public Publisher[] publishers { get; set; }
+        //public Publisher[] publishers { get; set; }
         public object esrb_rating { get; set; }
         public object clip { get; set; }
         public string description_raw { get; set; }
         public double recommendationScore { get; set; }
     }
 
-    public class Reactions
-    {
-    }
+    //public class Reactions
+    //{
+    //}
 
-    public class Added_By_Status
-    {
-        public int yet { get; set; }
-        public int owned { get; set; }
-        public int beaten { get; set; }
-        public int toplay { get; set; }
-        public int dropped { get; set; }
-        public int playing { get; set; }
-    }
+    //public class Added_By_Status
+    //{
+    //    public int yet { get; set; }
+    //    public int owned { get; set; }
+    //    public int beaten { get; set; }
+    //    public int toplay { get; set; }
+    //    public int dropped { get; set; }
+    //    public int playing { get; set; }
+    //}
 
-    public class Rating
-    {
-        public int id { get; set; }
-        public string title { get; set; }
-        public int count { get; set; }
-        public float percent { get; set; }
-    }
+    //public class Rating
+    //{
+    //    public int id { get; set; }
+    //    public string title { get; set; }
+    //    public int count { get; set; }
+    //    public float percent { get; set; }
+    //}
 
-    public class Parent_Platforms
-    {
-        public Platform platform { get; set; }
-    }
+    //public class Parent_Platforms
+    //{
+    //    public Platform platform { get; set; }
+    //}
 
-    public class Platform
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-    }
+    //public class Platform
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //}
 
-    public class Platform1
-    {
-        public Platform2 platform { get; set; }
-        public string released_at { get; set; }
-        public Requirements requirements { get; set; }
-    }
+    //public class Platform1
+    //{
+    //    public Platform2 platform { get; set; }
+    //    public string released_at { get; set; }
+    //    public Requirements requirements { get; set; }
+    //}
 
-    public class Platform2
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-        public object image { get; set; }
-        public object year_end { get; set; }
-        public object year_start { get; set; }
-        public int games_count { get; set; }
-        public string image_background { get; set; }
-    }
+    //public class Platform2
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //    public object image { get; set; }
+    //    public object year_end { get; set; }
+    //    public object year_start { get; set; }
+    //    public int games_count { get; set; }
+    //    public string image_background { get; set; }
+    //}
 
-    public class Requirements
-    {
-        public string minimum { get; set; }
-        public string recommended { get; set; }
-    }
+    //public class Requirements
+    //{
+    //    public string minimum { get; set; }
+    //    public string recommended { get; set; }
+    //}
 
-    public class Store
-    {
-        public int id { get; set; }
-        public string url { get; set; }
-        public Store1 store { get; set; }
-    }
+    //public class Store
+    //{
+    //    public int id { get; set; }
+    //    public string url { get; set; }
+    //    public Store1 store { get; set; }
+    //}
 
-    public class Store1
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-        public string domain { get; set; }
-        public int games_count { get; set; }
-        public string image_background { get; set; }
-    }
+    //public class Store1
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //    public string domain { get; set; }
+    //    public int games_count { get; set; }
+    //    public string image_background { get; set; }
+    //}
 
-    public class Developer
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-        public int games_count { get; set; }
-        public string image_background { get; set; }
-    }
+    //public class Developer
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //    public int games_count { get; set; }
+    //    public string image_background { get; set; }
+    //}
 
-    public class Genre
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-        public int games_count { get; set; }
-        public string image_background { get; set; }
-    }
+    //public class Genre
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //    public int games_count { get; set; }
+    //    public string image_background { get; set; }
+    //}
 
-    public class Tag
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-        public string language { get; set; }
-        public int games_count { get; set; }
-        public string image_background { get; set; }
-    }
+    //public class Tag
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //    public string language { get; set; }
+    //    public int games_count { get; set; }
+    //    public string image_background { get; set; }
+    //}
 
-    public class Publisher
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-        public int games_count { get; set; }
-        public string image_background { get; set; }
-    }
+    //public class Publisher
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //    public int games_count { get; set; }
+    //    public string image_background { get; set; }
+    //}
 
 
 }

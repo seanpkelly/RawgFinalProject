@@ -1,7 +1,7 @@
 ﻿
-@model List<Result>
+@model SearchResult
 
-@for (int i = 0; i < Model.Count; i++)
+@for (int i = 0; i < Model.results.Length; i++)
 {
 
 
@@ -18,24 +18,24 @@
             </th>
         </tr>
         <tr class="thread-dark">
-            <td> <a href="../Game/GameDetails?id=@Model[i].id" method="post">@Model[i].name<br /></a></td>
+            <td> <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">@Model.results[i].name<br /></a></td>
            
             
             <td>
-                @if (Model[i].metacritic == null)
+                @if (Model.results[i].metacritic == null)
                 {
                     <p>Not Available</p>
                 }
                 else
                 {
-                    @Model[i].metacritic
+                    @Model.results[i].metacritic
                 }<br />
             </td>
-            <td><img src="@Model[i].background_image" style="width:400px;height:400px" /><br /></td>
+            <td><img src="@Model.results[i].background_image" style="width:400px;height:400px" /><br /></td>
 
 
             <td>
-                <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
+                <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
                     <input type="submit" class="btn-success" value="Add to Favorites" />
 
                 </form>

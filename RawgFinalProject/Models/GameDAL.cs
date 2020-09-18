@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Permissions;
 using System.Threading.Tasks;
 
 namespace RawgFinalProject.Models
@@ -35,45 +37,31 @@ namespace RawgFinalProject.Models
             return games;
         }
 
-        public async Task<Game> GetGameByName(string output)
+        public async Task<Result> GetGameByName(string output)
         {
             var client = GetClient(); 
             var response = await client.GetAsync($"games/{output}"); 
-            var searchedGames = await response.Content.ReadAsAsync<Game>();
+            var searchedGames = await response.Content.ReadAsAsync<Result>();
 
             return searchedGames;
         }
 
-        public async Task<List<Result>> GetGameSearch(string output)
+        public async Task<SearchResult> GetGameSearch(string output)
         {
             var client = GetClient();
             var response = await client.GetAsync($"games?search={output}");
-            var searchedGames = await response.Content.ReadAsAsync<SearchResult>();
+            SearchResult searchedGames = await response.Content.ReadAsAsync<SearchResult>();
 
-            List<Result> gameResults = new List<Result>();
-
-            for (int i = 0; i < searchedGames.results.Length; i++)
-            {
-                gameResults.Add(searchedGames.results[i]);
-            }
-
-            return gameResults;
+            return searchedGames;
         }
 
-        public async Task<List<Result>> GetGameListByGenreAndTag(string apiQuery)
+        public async Task<SearchResult> GetGameListByGenreAndTag(string apiQuery)
         {
             var client = GetClient();
             var response = await client.GetAsync($"games?{apiQuery}");
             var searchedGames = await response.Content.ReadAsAsync<SearchResult>();
 
-            List<Result> gameResults = new List<Result>();
-
-            for (int i = 0; i < searchedGames.results.Length; i++)
-            {
-                gameResults.Add(searchedGames.results[i]);
-            }
-
-            return gameResults;
+            return searchedGames;
         }
     }
 }
