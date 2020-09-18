@@ -42,23 +42,67 @@ namespace RawgFinalProject.Controllers
         public async Task<IActionResult> SearchGameByName(string searchName)
         {
             SearchResult searchResult = await _gameDAL.GetGameSearch(searchName);
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            for (int i = 0; i < searchResult.results.Length; i++)
+            {
+                UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == searchResult.results[i].id).FirstOrDefault();
+                if (checkForDupes != null)
+                {
+                    searchResult.results[i].isfavorite = true;
+                }
+            }
+            //for (var result in searchResult.results)
+            //{
+            //    UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
+            //    if (checkForDupes != null)
+            //    {
+            //        result.isfavorite = true;
+            //    }
+            //}
             return View("SearchResults", searchResult);
 
         }
+        //public async Task<IActionResult> SearchResultByName(string searchName)
+        //{
+        //    SearchResult searchResult = await _gameDAL.GetGameSearch(searchName);
 
-        public async Task<Result> SearchGameById(int id)
+        //    string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        //    foreach (var result in searchResult.results)
+        //    {
+        //        UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
+        //        if (checkForDupes != null)
+        //        {
+        //            result.isfavorite = true;
+        //        }
+
+        //    }
+       
+
+        //    return View("SearchResults", searchResult);
+
+        //}
+
+        public async Task<Result> SearchResultById(int id)
+        {
+            var searchId = await _gameDAL.GetResultByName(id.ToString());
+            return searchId;
+        }
+
+        public async Task<Game> SearchGameById(int id)
         {
             var searchId = await _gameDAL.GetGameByName(id.ToString());
             return searchId;
         }
-
         public async Task<IActionResult> GameDetails(int id)
         {
-            Result searchedGame = await SearchGameById(id);
-
+            Result searchedGame = await SearchResultById(id);
+            Game searchedGame2 = await SearchGameById(id);
             AddToHistory(searchedGame);
-            return View(searchedGame);
+
+            //searchedGame.esrb = (esrb)searchedGame2.esrb_rating;
+            return View(searchedGame2);
         }
         #endregion
 
@@ -77,7 +121,7 @@ namespace RawgFinalProject.Controllers
 
             for (int i = 0; i < favList.Count; i++)
             {
-                convertedFavoritesList.Add(await SearchGameById(favList[i].GameId));
+                convertedFavoritesList.Add(await SearchResultById(favList[i].GameId));
             }
 
             DateTime time2 = DateTime.Now;
@@ -91,7 +135,7 @@ namespace RawgFinalProject.Controllers
 
             for (int i = 0; i < historyList.Count; i++)
             {
-                convertedHistoryList.Add(await SearchGameById(historyList[i].GameId));
+                convertedHistoryList.Add(await SearchResultById(historyList[i].GameId));
             }
 
             DateTime time4 = DateTime.Now;
@@ -111,6 +155,7 @@ namespace RawgFinalProject.Controllers
 
             f.GameId = id;
             f.UserId = activeUserId;
+            f.IsFavorite = true;
 
             //add code to remove game from history list if its added to favorites
 
@@ -182,7 +227,7 @@ namespace RawgFinalProject.Controllers
 
             for (int i = 0; i < favList.Count; i++) //8 seconds
             {
-                convertList.Add(await SearchGameById(favList[i].GameId));
+                convertList.Add(await SearchResultById(favList[i].GameId));
             }
 
 
@@ -295,8 +340,8 @@ namespace RawgFinalProject.Controllers
 
             for (int i = 1; i < 20; i++)
             {
-                //singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
-                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres=sports&page={i}");
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                //singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres=sports&page={i}");
 
                 foreach (var result in singlePageResults.results)
                 {
@@ -370,7 +415,7 @@ namespace RawgFinalProject.Controllers
 
             for (int i = 0; i < historyList.Count; i++)
             {
-                convertList.Add(await SearchGameById(historyList[i].GameId));
+                convertList.Add(await SearchResultById(historyList[i].GameId));
             }
 
             return View("DisplayHistory", convertList);

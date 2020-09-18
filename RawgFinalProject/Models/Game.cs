@@ -55,14 +55,21 @@ namespace RawgFinalProject.Models
         public Parent_Platforms[] parent_platforms { get; set; }
         public Platform1[] platforms { get; set; }
         public Store[] stores { get; set; }
-        //public Developer[] developers { get; set; }
+        public Developer[] developers { get; set; }
         public Genre[] genres { get; set; }
         public Tag[] tags { get; set; }
-        //public Publisher[] publishers { get; set; }
-        public object esrb_rating { get; set; }
-        public object clip { get; set; }
+        public Publisher[] publishers { get; set; }
+        public ESRB esrb_rating { get; set; }
+        public Clip clip { get; set; }
         public string description_raw { get; set; }
         public double recommendationScore { get; set; }
+    }
+
+    public class ESRB
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string slug { get; set; }
     }
 
     //public class Reactions
@@ -87,42 +94,42 @@ namespace RawgFinalProject.Models
     //    public float percent { get; set; }
     //}
 
-    //public class Parent_Platforms
-    //{
-    //    public Platform platform { get; set; }
-    //}
+    public class Parent_Platforms
+    {
+        public Platform platform { get; set; }
+    }
 
-    //public class Platform
-    //{
-    //    public int id { get; set; }
-    //    public string name { get; set; }
-    //    public string slug { get; set; }
-    //}
+    public class Platform
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string slug { get; set; }
+    }
 
-    //public class Platform1
-    //{
-    //    public Platform2 platform { get; set; }
-    //    public string released_at { get; set; }
-    //    public Requirements requirements { get; set; }
-    //}
+    public class Platform1
+    {
+        public Platform2 platform { get; set; }
+        public string released_at { get; set; }
+        public Requirements requirements { get; set; }
+    }
 
-    //public class Platform2
-    //{
-    //    public int id { get; set; }
-    //    public string name { get; set; }
-    //    public string slug { get; set; }
-    //    public object image { get; set; }
-    //    public object year_end { get; set; }
-    //    public object year_start { get; set; }
-    //    public int games_count { get; set; }
-    //    public string image_background { get; set; }
-    //}
+    public class Platform2
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string slug { get; set; }
+        public object image { get; set; }
+        public object year_end { get; set; }
+        public object year_start { get; set; }
+        public int games_count { get; set; }
+        public string image_background { get; set; }
+    }
 
-    //public class Requirements
-    //{
-    //    public string minimum { get; set; }
-    //    public string recommended { get; set; }
-    //}
+    public class Requirements
+    {
+        public string minimum { get; set; }
+        public string recommended { get; set; }
+    }
 
     //public class Store
     //{
@@ -141,14 +148,14 @@ namespace RawgFinalProject.Models
     //    public string image_background { get; set; }
     //}
 
-    //public class Developer
-    //{
-    //    public int id { get; set; }
-    //    public string name { get; set; }
-    //    public string slug { get; set; }
-    //    public int games_count { get; set; }
-    //    public string image_background { get; set; }
-    //}
+    public class Developer
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string slug { get; set; }
+        public int games_count { get; set; }
+        public string image_background { get; set; }
+    }
 
     //public class Genre
     //{
@@ -169,14 +176,14 @@ namespace RawgFinalProject.Models
     //    public string image_background { get; set; }
     //}
 
-    //public class Publisher
-    //{
-    //    public int id { get; set; }
-    //    public string name { get; set; }
-    //    public string slug { get; set; }
-    //    public int games_count { get; set; }
-    //    public string image_background { get; set; }
-    //}
+    public class Publisher
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string slug { get; set; }
+        public int games_count { get; set; }
+        public string image_background { get; set; }
+    }
 
 
 }

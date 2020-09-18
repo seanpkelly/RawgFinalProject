@@ -13,7 +13,7 @@
             <th>
                 Metacritic Score
             </th>
-            <th>
+            <th style="width:300px;">
                 Background Image
             </th>
         </tr>
@@ -31,76 +31,21 @@
                     @Model.results[i].metacritic
                 }<br />
             </td>
-            <td><img src="@Model.results[i].background_image" style="width:400px;height:400px" /><br /></td>
-
+            <td><img src="@Model.results[i].background_image" style="width:300px;height:300px" /><br /></td>
 
             <td>
-                <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
-                    <input type="submit" class="btn-success" value="Add to Favorites" />
+                @if (!Model.results[i].isfavorite)
+                {
+                    <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
+                        <input type="submit" class="btn-success" value="Add to Favorites" />
 
-                </form>
+                    </form>
+                }
+                else
+                {
+                    <p>This game is already a favorite!<br /> checkout one of our recommendations!</p>
+                }
             </td>
-
-
-            @*@if (!Model[i].isFavorite)
-            {
-        <form action="../SpiceyRecipe/AddToFavorites" method="post">
-            <input type="text" name="title" value="@Model[i].title" hidden />
-            <input type="text" name="href" value="@Model[i].href" hidden />
-            <input type="text" name="ingredients" value="@Model[i].ingredients" hidden />
-            <input type="text" name="thumbnail" value="@Model[i].thumbnail" hidden />
-            <input type="number" name="page" value="@Model[0].page" hidden />
-            <input type="submit" class="btn-success" value="Add To Favorites" />
-        </form> }
-                        else
-                        {
-        <a href="../Favorite/Index">This is already a favorite! Click here to go to see all of them!</a>                }*@
-
-
-
-
-
-
-
         </tr>
-
-
-
-
 </table>
 }
-
-
-
-
-
-
-
-
-
-
-@*<p>
-        Genre: @foreach (var g in Model.genres)
-        {
-        <p>@g.name</p>
-    }
-        </p>
-        <p>
-            Tags: @foreach (var t in Model.tags)
-            {
-            <p>@t.name</p>
-        }
-            </p>*@
-
-
-
-
-
-@*@foreach(Result r in Model)
-    {
-        <p>@r.metacritic</p>
-        <p>@r.name</p>
-        <p>@r.tags</p>
-        <br />
-        <img src="@r.background_image" width="25%" height="25%" alt="Alternate Text" />
-    }*@
