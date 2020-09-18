@@ -14,7 +14,7 @@
 
 <p>Playtime: @Model.playtime</p>
 
-<p>
+@*<p>
     Platforms:
     @for (int i = 0; i < Model.platforms.Length; i++)
         if (i < Model.platforms.Length - 1)
@@ -64,7 +64,7 @@
         {
         @($"{Model.tags[i].name}")
         }
-</p>
+</p>*@
 
 <p>ESRB Rating: @Model.esrb_rating</p>
 

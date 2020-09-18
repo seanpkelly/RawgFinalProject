@@ -41,13 +41,13 @@ namespace RawgFinalProject.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchGameByName(string searchName)
         {
-            List<Result> searchResult = await _gameDAL.GetGameSearch(searchName);
+            SearchResult searchResult = await _gameDAL.GetGameSearch(searchName);
 
             return View("SearchResults", searchResult);
 
         }
 
-        public async Task<Game> SearchGameById(int id)
+        public async Task<Result> SearchGameById(int id)
         {
             var searchId = await _gameDAL.GetGameByName(id.ToString());
             return searchId;
@@ -55,7 +55,7 @@ namespace RawgFinalProject.Controllers
 
         public async Task<IActionResult> GameDetails(int id)
         {
-            Game searchedGame = await SearchGameById(id);
+            Result searchedGame = await SearchGameById(id);
 
             AddToHistory(searchedGame);
             return View(searchedGame);
@@ -71,27 +71,37 @@ namespace RawgFinalProject.Controllers
             //Creates list of favorites for the current user
             var favList = await _gameContext.UserFavorite.Where(x => x.UserId == activeUserId).ToListAsync();
 
-            List<Game> convertedFavoritesList = new List<Game>();
+            List<Result> convertedFavoritesList = new List<Result>();
+
+            DateTime time1 = DateTime.Now;
 
             for (int i = 0; i < favList.Count; i++)
             {
                 convertedFavoritesList.Add(await SearchGameById(favList[i].GameId));
             }
 
+            DateTime time2 = DateTime.Now;
+
             //return View(convertedFavoritesList);
 
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
-            List<Game> convertedHistoryList = new List<Game>();
+            List<Result> convertedHistoryList = new List<Result>();
+
+            DateTime time3 = DateTime.Now;
+
             for (int i = 0; i < historyList.Count; i++)
             {
                 convertedHistoryList.Add(await SearchGameById(historyList[i].GameId));
             }
-            List<List<Game>> favesAndHistory = new List<List<Game>>();
+
+            DateTime time4 = DateTime.Now;
+
+            List<List<Result>> favesAndHistory = new List<List<Result>>();
             favesAndHistory.Add(convertedFavoritesList);
             favesAndHistory.Add(convertedHistoryList);
             return View(favesAndHistory);
         }
-
+        
         public IActionResult AddToFavorites(int id)
         {
             //Turn into method call: CallIdString
@@ -152,7 +162,7 @@ namespace RawgFinalProject.Controllers
             string[] genres =
                 { "Action", "Indie", "Adventure", "RPG", "Strategy", 
                 "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing",
-                "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Game", "Educational", "Card" };
+                "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Games", "Educational", "Card" };
 
             //test tag names
             //Selected array of tags in API
@@ -167,20 +177,13 @@ namespace RawgFinalProject.Controllers
             //Creates list of favorites for the current user
             var favList = await _gameContext.UserFavorite.Where(x => x.UserId == activeUserId).ToListAsync();
 
-
-
-            DateTime time1 = DateTime.Now;
             
-            List<Game> convertList = new List<Game>();
+            List<Result> convertList = new List<Result>();
 
             for (int i = 0; i < favList.Count; i++) //8 seconds
             {
                 convertList.Add(await SearchGameById(favList[i].GameId));
             }
-
-            DateTime time2 = DateTime.Now;
-
-
 
 
             //creates a prepopulates a dictionary to log how many occurences of each genre appear in users favorites
@@ -198,13 +201,13 @@ namespace RawgFinalProject.Controllers
             }
 
             //populates tag and genre dictionaries with the number of occurences of each tag/genre for the game
-            foreach (Game game in convertList)
+            foreach (Result result in convertList)
             {
                 foreach (string key in genreCountDictionary.Keys.ToList())
                 {
-                    for (int i = 0; i < game.genres.Length; i++)
+                    for (int i = 0; i < result.genres.Length; i++)
                     {
-                        if (key == game.genres[i].name)
+                        if (key == result.genres[i].name)
                         {
                             genreCountDictionary[key] += 1;
                         }
@@ -212,9 +215,9 @@ namespace RawgFinalProject.Controllers
                 }
                 foreach (string key in tagCountDictionary.Keys.ToList())
                 {
-                    for (int i = 0; i < game.tags.Length; i++)
+                    for (int i = 0; i < result.tags.Length; i++)
                     {
-                        if (key == game.tags[i].name)
+                        if (key == result.tags[i].name)
                         {
                             tagCountDictionary[key] += 1;
                         }
@@ -287,49 +290,33 @@ namespace RawgFinalProject.Controllers
 
             //This into method?
 
-            List<Result> singlePageResults = new List<Result>();
+            SearchResult singlePageResults = new SearchResult();
             List<Result> recommendationResultPool = new List<Result>();
 
-            for (int i = 1; i < 2; i++)  //took 5 seconds or so
+            for (int i = 1; i < 20; i++)
             {
-                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                //singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres=sports&page={i}");
 
-                foreach (var result in singlePageResults)
+                foreach (var result in singlePageResults.results)
                 {
                     recommendationResultPool.Add(result);
                 }
             }
 
 
-
-
-            DateTime time4 = DateTime.Now;
-
-            //List<Result> recommendationResultPool = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
-            List<Game> recommendationGamePool = new List<Game>();  //check this one out - took 1 min to run
-            //Turn this into method?
-            for (int i = 0; i < recommendationResultPool.Count; i++) //calls api 80 times (5 pages of results)
-            {
-                recommendationGamePool.Add(await SearchGameById(recommendationResultPool[i].id));
-            }
-
-            DateTime time5 = DateTime.Now;
-
-
-
-
             //Calculate score through genres and tags present in Favorites List
-            List<RecommendedGame> gameRecs = new List<RecommendedGame>();
-            foreach (Game game in recommendationGamePool)
+            List<Result> gameRecs = new List<Result>();
+            foreach (Result result in recommendationResultPool)
             {
               double genreRecScore = 0;
               double tagRecScore = 0;
               double totalRecScore = 0;
-                foreach (Genre genre in game.genres)
+                foreach (Genre genre in result.genres)
                 {
                     genreRecScore += weights[0][genre.name];
                 }
-                foreach (Tag tag in game.tags)
+                foreach (Tag tag in result.tags)
                 {
                     if (weights[1].ContainsKey(tag.name.ToString()))
                     {
@@ -338,12 +325,13 @@ namespace RawgFinalProject.Controllers
                 }
 
                 totalRecScore = Math.Round((genreRecScore * 7) + (tagRecScore * 3),2);
-                gameRecs.Add(new RecommendedGame(game.id, totalRecScore));
+                result.recommendationScore = totalRecScore;
+                gameRecs.Add(result);
 
             }
 
             //Orders recommendations by score
-            List<RecommendedGame> orderedRecs = new List<RecommendedGame>();
+            List<Result> orderedRecs = new List<Result>();
             foreach (var item in gameRecs.OrderByDescending(i => i.recommendationScore))
             {
                 orderedRecs.Add(item);
@@ -351,26 +339,11 @@ namespace RawgFinalProject.Controllers
 
 
 
-
-            DateTime time7 = DateTime.Now;
-
-            //Calls API to convert recommendations into Game objects
-            List<Game> orderedGameRecs = new List<Game>(); //took 1 minute to run
-            for (int i = 0; i < orderedRecs.Count; i++)
-            {
-                orderedGameRecs.Add(await SearchGameById(orderedRecs[i].id));
-                orderedGameRecs[i].recommendationScore = orderedRecs[i].recommendationScore;
-            }
-
-            DateTime time8 = DateTime.Now;
-
-
-
-            return View("GenerateRecommendations", orderedGameRecs);
+            return View("GenerateRecommendations", orderedRecs);
         }
         #endregion
 
-        public void AddToHistory(Game addToHistory)
+        public void AddToHistory(Result addToHistory)
         {
             string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             UserHistory h = new UserHistory();
@@ -393,7 +366,7 @@ namespace RawgFinalProject.Controllers
             //Creates list of history for the current user
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
 
-            List<Game> convertList = new List<Game>();
+            List<Result> convertList = new List<Result>();
 
             for (int i = 0; i < historyList.Count; i++)
             {
