@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace RawgFinalProject.Models
@@ -20,7 +22,7 @@ namespace RawgFinalProject.Models
         public string slug { get; set; }
         public string name { get; set; }
         public int playtime { get; set; }
-        public Platform[] platforms { get; set; }
+        //public Platform[] platforms { get; set; }
         public Store[] stores { get; set; }
         public string released { get; set; }
         public bool tba { get; set; }
@@ -43,9 +45,12 @@ namespace RawgFinalProject.Models
         public string saturated_color { get; set; }
         public string dominant_color { get; set; }
         public Short_Screenshots[] short_screenshots { get; set; }
-        public Parent_Platforms[] parent_platforms { get; set; }
+        //public Parent_Platforms[] parent_platforms { get; set; }
         public Genre[] genres { get; set; }
         public double recommendationScore { get; set; }
+        public string description { get; set; }
+        public object esrb { get; set; }
+        public bool isfavorite { get; set; }
     }
 
     public class Added_By_Status
@@ -65,25 +70,30 @@ namespace RawgFinalProject.Models
         public string video { get; set; }
         public string preview { get; set; }
     }
-
+    [DataContract]
     public class Clips
     {
+        [DataMember(Name ="320")]
         public string _320 { get; set; }
+
+        [DataMember(Name ="640")]
         public string _640 { get; set; }
+
+        [DataMember(Name ="full")]
         public string full { get; set; }
     }
 
-    public class Platform
-    {
-        public Platform1 platform { get; set; }
-    }
+    //public class Platform
+    //{
+    //    public Platform1 platform { get; set; }
+    //}
 
-    public class Platform1
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-    }
+    //public class Platform1
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //}
 
     public class Store
     {
@@ -121,17 +131,17 @@ namespace RawgFinalProject.Models
         public string image { get; set; }
     }
 
-    public class Parent_Platforms
-    {
-        public Platform2 platform { get; set; }
-    }
+    //public class Parent_Platforms
+    //{
+    //    public Platform2 platform { get; set; }
+    //}
 
-    public class Platform2
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string slug { get; set; }
-    }
+    //public class Platform2
+    //{
+    //    public int id { get; set; }
+    //    public string name { get; set; }
+    //    public string slug { get; set; }
+    //}
 
     public class Genre
     {
