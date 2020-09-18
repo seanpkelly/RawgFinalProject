@@ -13,11 +13,6 @@ namespace RawgFinalProject.Models
         public object previous { get; set; }
         public Result[] results { get; set; }
         public bool user_platforms { get; set; }
-
-        public static implicit operator List<object>(SearchResult v)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class Result
