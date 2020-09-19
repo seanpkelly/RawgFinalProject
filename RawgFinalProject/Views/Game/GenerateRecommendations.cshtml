@@ -1,13 +1,15 @@
 ﻿
 @{
-    ViewData["Title"] = "GenerateRecommendations";
+    ViewData["Title"] = "Game Recommendations";
 }
 
-<h1>GenerateRecommendations</h1>
+<h1>Recommended Games!</h1>
 
 @model List<Result>
 
-@for (int i = 0; i < Model.Count; i++)
+
+
+@for (int i = 0; i < 30; i++)
 {
     <table class="table table-hover table-info" style="table-layout:fixed">
         <tr>
@@ -47,11 +49,11 @@
                 @Model[i].recommendationScore
             </td>
 
-            @*<td>
-                <form action="../Game/DeleteFavorite?id=@Model[i].id" method="post">
-                    <input type="submit" class="btn-danger" value="Remove From Favorites" />
+            <td>
+                <form action="../Game/AddToWishlist?id=@Model[i].id" method="post">
+                    <input type="submit" class="btn-success" value="Add to Wishlist" />
                 </form>
-            </td>*@
+            </td>
 
         </tr>
 

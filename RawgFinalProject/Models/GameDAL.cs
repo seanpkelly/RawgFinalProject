@@ -67,7 +67,7 @@ namespace RawgFinalProject.Models
         {
             var client = GetClient();
             var response = await client.GetAsync($"games?{apiQuery}");
-            var searchedGames = await response.Content.ReadAsAsync<SearchResult>();
+            SearchResult searchedGames = await response.Content.ReadAsAsync<SearchResult>();
 
             return searchedGames;
         }

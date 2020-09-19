@@ -94,6 +94,32 @@ namespace RawgFinalProject.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> SeeMoreGamesLikeThis(string id)
+        {
+            Game game = await _gameDAL.GetGameByName(id);
+
+            string genreQuery = "";
+            string tagQuery = "";
+
+            foreach (var genre in game.genres)
+            {
+                genreQuery += genre.name + ",";
+            }
+            foreach (var tag in game.tags)
+            {
+                tagQuery += tag.name + ",";
+            }
+
+            tagQuery = tagQuery.Substring(0, tagQuery.Length - 1);
+
+            SearchResult similarGameResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
+
+            ViewBag.Header = $"More games like {game.name}.";
+
+            return View("SearchResults", similarGameResults);
+        }
+
+        [Authorize]
         public async Task<IActionResult> GameDetails(int id)
         {
             Result searchedGame = await SearchResultById(id);
@@ -107,7 +133,7 @@ namespace RawgFinalProject.Controllers
 
         #region Favorites CRUD
         [Authorize]
-        public async Task<IActionResult> DisplayFavorites()
+        public async Task<IActionResult> DisplayFavorites() //check performance?
         {
             //Turn into method call: CallIdString
             string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -335,6 +361,9 @@ namespace RawgFinalProject.Controllers
             SearchResult singlePageResults = new SearchResult();
             List<Result> recommendationResultPool = new List<Result>();
 
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+
             for (int i = 1; i < 20; i++)
             {
                 singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
@@ -342,7 +371,12 @@ namespace RawgFinalProject.Controllers
 
                 foreach (var result in singlePageResults.results)
                 {
-                    recommendationResultPool.Add(result);
+                    UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
+
+                    if (checkForDupes == null)
+                    {
+                        recommendationResultPool.Add(result);
+                    }
                 }
             }
 
@@ -386,15 +420,20 @@ namespace RawgFinalProject.Controllers
         public void AddToHistory(Result addToHistory)
         {
             string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            UserHistory h = new UserHistory();
+            UserHistory history = new UserHistory();
 
-            h.GameId = addToHistory.id;
-            h.UserId = activeUserId;
+            history.GameId = addToHistory.id;
+            history.UserId = activeUserId;
 
-            if (ModelState.IsValid)
+            UserHistory checkForDupes = _gameContext.UserHistory.Where(h => h.UserId == activeUserId && h.GameId == history.GameId).FirstOrDefault();
+
+            if (checkForDupes == null)
             {
-                _gameContext.UserHistory.Add(h);
-                _gameContext.SaveChanges();
+                if (ModelState.IsValid)
+                {
+                    _gameContext.UserHistory.Add(history);
+                    _gameContext.SaveChanges();
+                }
             }
         }
 
@@ -417,5 +456,77 @@ namespace RawgFinalProject.Controllers
             return View("DisplayHistory", convertList);
         }
 
+        [Authorize]
+        public async Task<IActionResult> DisplayWishlist() //check performance?
+        {
+            //Turn into method call: CallIdString
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            //Creates list of favorites for the current user
+            var wishList = await _gameContext.WishList.Where(x => x.UserId == activeUserId).ToListAsync();
+
+            List<Result> convertedWishlist = new List<Result>();
+
+            for (int i = 0; i < wishList.Count; i++)
+            {
+                convertedWishlist.Add(await SearchResultById(wishList[i].GameId));
+            }
+
+            //List<List<Result>> favesAndHistory = new List<List<Result>>();
+            //favesAndHistory.Add(convertedWishlist);
+            //favesAndHistory.Add(convertedHistoryList);
+            return View(convertedWishlist);
+        }
+
+        [Authorize]
+        public IActionResult AddToWishlist(int id)
+        {
+            //Turn into method call: CallIdString
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            WishList f = new WishList();
+
+            f.GameId = id;
+            f.UserId = activeUserId;
+
+            //check for dupes does not throw an error message or return to search results correctly yet
+            WishList checkForDupes = _gameContext.WishList.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
+
+            if (checkForDupes == null)
+            {
+                if (ModelState.IsValid)
+                {
+                    _gameContext.WishList.Add(f);
+                    _gameContext.SaveChanges();
+                }
+
+                return RedirectToAction("DisplayWishlist");
+            }
+            else
+            {
+                ViewBag.Error = "This game is already on your wishlist!";
+                return RedirectToAction("GenerateRecommendations"); //redirect to a different page depending on the page that sent you here?
+            }
+
+        }
+
+        [Authorize]
+        public IActionResult DeleteWishlist(int id)
+        {
+            //Turn into method call: CallIdString
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var gameToDelete = _gameContext.WishList.Find(id);
+
+            WishList deleteItem = _gameContext.WishList.Where(uf => uf.UserId == activeUserId && uf.GameId == id).FirstOrDefault();
+
+            if (deleteItem != null)
+            {
+                _gameContext.WishList.Remove(deleteItem);
+                _gameContext.SaveChanges();
+            }
+
+            return RedirectToAction("DisplayWishlist");
+        }
     }
 }
