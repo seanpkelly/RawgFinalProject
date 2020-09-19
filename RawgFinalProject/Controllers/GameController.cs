@@ -345,14 +345,14 @@ namespace RawgFinalProject.Controllers
             {
                 if (weights[0][key] != 0)
                 {
-                    genreQuery += key.ToLower() + ",";
+                    genreQuery += key.Replace(" ", "-").ToLower() + ","; 
                 }
             }
             foreach (string key in weights[1].Keys.ToList())
             {
                 if (weights[1][key] != 0)
                 {
-                    tagQuery += key.ToLower() + ",";
+                    tagQuery += key.Replace(" ", "-").ToLower() + ",";
                 }
             }
 
@@ -527,6 +527,13 @@ namespace RawgFinalProject.Controllers
             }
 
             return RedirectToAction("DisplayWishlist");
+        }
+
+        public async Task<IActionResult> IndieGames()
+        {
+            var searchId = await _gameDAL.GetGameListByGenreAndTag("genres=indie");
+
+            return View(searchId);
         }
     }
 }
