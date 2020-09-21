@@ -65,6 +65,7 @@ namespace RawgFinalProject.Models
 
         public async Task<SearchResult> GetGameListByGenreAndTag(string apiQuery)
         {
+            apiQuery = apiQuery.ToLower();
             var client = GetClient();
             var response = await client.GetAsync($"games?{apiQuery}");
             SearchResult searchedGames = await response.Content.ReadAsAsync<SearchResult>();

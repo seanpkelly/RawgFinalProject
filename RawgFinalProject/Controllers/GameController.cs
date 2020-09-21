@@ -74,6 +74,7 @@ namespace RawgFinalProject.Controllers
             var searchId = await _gameDAL.GetGameByName(id.ToString());
             return searchId;
         }
+        
         [Authorize]
         public async Task<IActionResult> GetGameByDeveloper(string id)
         {
@@ -404,6 +405,8 @@ namespace RawgFinalProject.Controllers
             return View("QuestionnaireResults", recommendationResultPool);
         }
 
+        [Authorize]
+        [HttpPost]
         public async Task<List<Result>> GenerateQuestionnaireResults(string genreQuery, string tagQuery)
         {
             SearchResult singlePageResults = new SearchResult();
@@ -611,9 +614,9 @@ namespace RawgFinalProject.Controllers
 
         public async Task<IActionResult> IndieGames()
         {
-            var searchId = await _gameDAL.GetGameListByGenreAndTag("genres=indie");
+            var indieGames = await _gameDAL.GetGameListByGenreAndTag("genres=indie");
 
-            return View(searchId);
+            return View(indieGames);
         }
     }
 }
