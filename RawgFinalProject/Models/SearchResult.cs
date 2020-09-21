@@ -51,6 +51,7 @@ namespace RawgFinalProject.Models
         public string description { get; set; }
         public object esrb { get; set; }
         public bool isfavorite { get; set; }
+        public double userrating { get; set; }
     }
 
     public class Added_By_Status

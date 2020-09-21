@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RawgFinalProject.Models;
@@ -36,6 +32,11 @@ namespace RawgFinalProject.Controllers
 
             return View(games);
 
+        }
+
+        public IActionResult Questionnaire()
+        {
+            return View();
         }
 
         #region Search for Games
@@ -147,6 +148,7 @@ namespace RawgFinalProject.Controllers
             for (int i = 0; i < favList.Count; i++)
             {
                 convertedFavoritesList.Add(await SearchResultById(favList[i].GameId));
+                convertedFavoritesList[i].userrating = favList[i].UserRating;
             }
 
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
@@ -176,6 +178,7 @@ namespace RawgFinalProject.Controllers
             f.GameId = id;
             f.UserId = activeUserId;
             f.IsFavorite = true;
+            f.UserRating = -1;
 
             //add code to remove game from history list if its added to favorites
 
@@ -197,6 +200,22 @@ namespace RawgFinalProject.Controllers
                 ViewBag.Error = "This game is already a favorite!";
                 return RedirectToAction("SearchResults");
             }
+
+        }
+
+        [Authorize]
+        public IActionResult AddUserRating(double userrating, int id)
+        {
+            string activeUserId = GetActiveUser();
+            UserFavorite favorite = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
+
+            favorite.UserRating = userrating;
+
+            _gameContext.Entry(favorite).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _gameContext.Update(favorite);
+            _gameContext.SaveChanges();
+
+            return RedirectToAction("DisplayFavorites");
 
         }
 
@@ -367,7 +386,39 @@ namespace RawgFinalProject.Controllers
             }
             return query;
         }
+        [Authorize]
+        public async Task<IActionResult> GenerateQuestionnaireRecommendations(Microsoft.AspNetCore.Http.IFormCollection form)
+        {
 
+            string genre = form["genre"];
+            string tag = form["tag"];
+            //List<Dictionary<string, double>> weights = await GenerateWeights();
+
+            //string genreQuery = CreateQuery(weights[0]);
+            //string tagQuery = CreateQuery(weights[1]);
+
+            List<Result> recommendationResultPool = await GenerateQuestionnaireResults(genre, tag);
+
+            //List<Result> orderedRecs = GenerateScores(recommendationResultPool, weights);
+
+            return View("QuestionnaireResults", recommendationResultPool);
+        }
+
+        public async Task<List<Result>> GenerateQuestionnaireResults(string genreQuery, string tagQuery)
+        {
+            SearchResult singlePageResults = new SearchResult();
+            List<Result> recommendationResultPool = new List<Result>();
+
+            for (int i = 1; i < 5; i++)
+            {
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                foreach (var result in singlePageResults.results)
+                {
+                    recommendationResultPool.Add(result);
+                }
+            }
+            return recommendationResultPool;
+        }
 
         public async Task<List<Result>> GenerateResultPool(string genreQuery, string tagQuery)
         {
@@ -428,6 +479,7 @@ namespace RawgFinalProject.Controllers
 
             return orderedRecs;
         }
+ 
 
         [Authorize]
         public async Task<IActionResult> GenerateRecommendations()

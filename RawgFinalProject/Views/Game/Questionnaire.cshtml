@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewData["Title"] = "Questionnaire";
+
+}
+
+@model Game
+            @{string[] genres = { "Action", "Indie", "Adventure", "RPG", "Strategy", "Shooter", "Casual", "Simulation", "Puzzle",
+            "Arcade", "Platformer", "Racing", "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Games", "Educational", "Card" }; }
+            @{string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi",
+                "2D", "Third Person", "FPS", "Horror", "Fantasy", "Comedy", "Sandbox", "Survival", "Exploration", "Stealth", "Tactical", "Pixel Graphics", "Action RPG", "Retro",
+                "Space", "Zombies", "Point & Click", "Action-Adventure", "Hack and Slash", "Side Scroller", "Survival Horror", "RTS", "Roguelike", "mmo", "Driving", "Puzzle",
+                "MMORPG", "Management", "JRPG" };}
+<h1>Questionnaire</h1>
+<h3>Take this questionnaire to find out what kind of games you may like. <br />Wether you're new to gaming or just looking to try something new!</h3>
+<form action="../Game/GenerateQuestionnaireRecommendations" method="post">
+    <h2>Here are our genres,<br />please select any of these tags that interest you!</h2>
+    @for (int i = 0; i < genres.Length; i++)
+    {
+        <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" />
+        <label for="@genres[i]"> <b>@genres[i]</b> </label><br />
+    }
+   <br /> <h2>Please select any of these tags that interest you!<br />Some of these tags will seem redundant, <br />because there is some overlap with genres.</h2><br />
+    @for (int i = 0; i < tags.Length; i++)
+    {
+        <input type="checkbox" id="@tags[i]" name="tag" value="@tags[i]" />
+        <label for="@tags[i]"> <b>@tags[i]</b> </label><br />
+    }
+
+    <br /><h2>Now let's find you some games!</h2><br />
+    <input type="submit" value="Get Game Recommendations" />
+
+
+</form>
+
