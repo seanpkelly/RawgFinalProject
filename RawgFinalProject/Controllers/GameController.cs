@@ -29,7 +29,7 @@ namespace RawgFinalProject.Controllers
         }
         #endregion
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> SearchGames()
         {
             Game games = await _gameDAL.GetGamesList();
 
