@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body>
+<body style ="background-color:rgb(20, 20, 20)">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-rgb(20, 20, 20) border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Game Recommendation <br /> Station</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -20,26 +20,26 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="Questionnaire">Questionnaire</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Game" asp-action="Questionnaire">Questionnaire</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="SearchGames">Game Search</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Game" asp-action="SearchGames">Game Search</a>
                         </li>
                         <li class="nav-item">
 
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="IndieGames">Indie Games</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Game" asp-action="IndieGames">Indie Games</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="DisplayFavorites">Favorite Games</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Game" asp-action="DisplayFavorites">Favorite Games</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="DisplayHistory">Search History</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Game" asp-action="DisplayHistory">Search History</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="DisplayWishlist">Wishlist</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Game" asp-action="DisplayWishlist">Wishlist</a>
                         </li>
                     </ul>
                 </div>
@@ -61,5 +61,5 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
-</body>
+    </body>
 </html>

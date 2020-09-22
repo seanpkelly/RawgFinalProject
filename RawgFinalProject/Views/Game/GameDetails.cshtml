@@ -4,6 +4,20 @@
 
 @model Game
 
+<style>
+    body {
+        background-image: linear-gradient(to bottom, rgba(105, 105, 105, 0.80), rgba(0, 0, 0, 1)),
+        url('@Model.background_image');
+        background-size: cover;
+        color: white;
+    }
+
+    .disabledbutton {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+
 <h2>@Model.name</h2>
 
 <p>Game Description: @Model.description_raw</p>
@@ -89,5 +103,5 @@
 }
 else
 {
-    <p>This game is already a favorite!<br /> checkout one of our recommendations!</p>
+    <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
 }
