@@ -161,6 +161,7 @@ namespace RawgFinalProject.Controllers
             {
                 convertedFavoritesList.Add(await SearchResultById(favList[i].GameId));
                 convertedFavoritesList[i].userrating = favList[i].UserRating;
+                convertedFavoritesList[i].favoritecount = favList[i].FavoriteCount;
             }
 
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
@@ -176,6 +177,7 @@ namespace RawgFinalProject.Controllers
             List<List<Result>> favesAndHistory = new List<List<Result>>();
             favesAndHistory.Add(convertedFavoritesList);
             favesAndHistory.Add(convertedHistoryList);
+            
             return View(favesAndHistory);
         }
 
@@ -192,13 +194,8 @@ namespace RawgFinalProject.Controllers
             f.UserRating = -1;
 
 
-
-
-
-            //add code to remove game from history list if its added to favorites
-
-
-
+            //remove game from history list if its added to favorites
+            DeleteHistory(id);
 
 
             //check for dupes does not throw an error message or return to search results correctly yet
@@ -208,19 +205,20 @@ namespace RawgFinalProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    ////iterate favorite counter here///////////////////////////////////////////////////////
-
-                    UserFavorite favorite = _gameContext.UserFavorite.Where(f => f.GameId == id).FirstOrDefault();
-
-                    //foreach (var fav in favorite)
-                    //{
-                    //    fav.FavoriteCount++;
-                    //    _gameContext.Entry(fav).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                    //    _gameContext.Update(fav);
-                    //    _gameContext.SaveChanges();
-                    //}
-                    
                     _gameContext.UserFavorite.Add(f);
+                    _gameContext.SaveChanges();
+                }
+
+                ////iterate favorite counter here///////////////////////////////////////////////////////
+
+                List<UserFavorite> favorite = _gameContext.UserFavorite.Where(f => f.GameId == id).ToList();
+                int count = favorite.Max(m => m.FavoriteCount) +1;
+
+                foreach (var fav in favorite)
+                {
+                    fav.FavoriteCount = count;
+                    _gameContext.Entry(fav).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _gameContext.Update(fav);
                     _gameContext.SaveChanges();
                 }
 
@@ -251,6 +249,25 @@ namespace RawgFinalProject.Controllers
         }
 
         [Authorize]
+        public IActionResult DeleteHistory(int id)
+        {
+            //Turn into method call: CallIdString
+            string activeUserId = GetActiveUser();
+
+            var gameToDelete = _gameContext.UserFavorite.Find(id);
+
+            UserHistory deleteItem = _gameContext.UserHistory.Where(h => h.UserId == activeUserId && h.GameId == id).FirstOrDefault();
+
+            if (deleteItem != null)
+            {
+                _gameContext.UserHistory.Remove(deleteItem);
+                _gameContext.SaveChanges();
+            }
+
+            return RedirectToAction("DisplayFavorites");
+        }
+
+        [Authorize]
         public IActionResult DeleteFavorite(int id)
         {
             //Turn into method call: CallIdString
@@ -262,9 +279,18 @@ namespace RawgFinalProject.Controllers
 
             if (deleteItem != null)
             {
-
-                ////decrement favorite counter here////////////////////////////////////////////////
                 _gameContext.UserFavorite.Remove(deleteItem);
+                _gameContext.SaveChanges();
+            }
+
+            List<UserFavorite> favorite = _gameContext.UserFavorite.Where(f => f.GameId == id).ToList();
+            int count = favorite.Max(m => m.FavoriteCount) - 1;
+
+            foreach (var fav in favorite)
+            {
+                fav.FavoriteCount = count;
+                _gameContext.Entry(fav).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                _gameContext.Update(fav);
                 _gameContext.SaveChanges();
             }
 
