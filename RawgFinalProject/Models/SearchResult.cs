@@ -34,7 +34,7 @@ namespace RawgFinalProject.Models
         public int reviews_text_count { get; set; }
         public int added { get; set; }
         public Added_By_Status added_by_status { get; set; }
-        public object metacritic { get; set; }
+        public int? metacritic { get; set; }
         public int suggestions_count { get; set; }
         public int id { get; set; }
         public object score { get; set; }

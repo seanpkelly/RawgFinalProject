@@ -4,81 +4,87 @@
 
 @model List<List<Result>>
 
-<h1 class="display-1">Here are your Favorite Games!</h1>
+    <style>
+        table.center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .disabledbutton {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+
+<h1 class="display-1" style="color:white;">Here are your Favorite Games!</h1>
 @if (Model[0].Count < 5)
 {
     <p>Please add at least five games to your favorites list to be able to generate recommendations!</p>
 }
 else
 {
-
     <td>
         <form action="../Game/GenerateRecommendations" method="post">
             <input type="submit" class="btn-success" value="Get Recommendations!" />
         </form>
     </td>
-
 }
+
 @for (int i = 0; i < Model[0].Count; i++)
 {
-    <table class="table table-hover table-info" style="table-layout:fixed">
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Metacritic Score
-            </th>
-            <th>
-                User Rating
-            </th>
-            <th>
-                Background Image
-            </th>
-        </tr>
-        <tr class="thread-dark">
+    <a href="../Game/GameDetails?id=@Model[0][i].id" method="post">
+        <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
 
-            <td>
-                <a href="../Game/GameDetails?id=@Model[0][i].id" method="post">@Model[0][i].name<br /></a>
-            </td>
+            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
+                url( @Model[0][i].background_image ); background-size:cover;">
 
-            <td>
-                @if (Model[0][i].metacritic == null)
-                {
-                    <a>Not availabile</a>
-                }
-                else
-                {
-                    @Model[0][i].metacritic
-                }
-                <br />
-            <td>
-                @if (Model[0][i].userrating == -1)
-                {
-                    <form action="../Game/AddUserRating" method="post">
-                        <input type ="number" min="0" max="100" name="UserRating" required placeholder="0-100"/>
-                        <input type ="number" name="id" value="@Model[0][i].id" hidden/>
-                        <input type = "submit" value="submit"/>
+                <td style="color:white; font-size:25px;">@Model[0][i].name<br /></td>
+
+
+                <td style="font-size:30px;">
+                    @if (Model[0][i].metacritic == 0)
+                    {
+                        <p>Not Available</p>
+                    }
+                    else
+                    {
+                        if (Model[0][i].metacritic >= 75)
+                        {
+                            <p style="color:green"> @Model[0][i].metacritic </p>
+                        }
+                        else if (Model[0][i].metacritic >= 50 && Model[0][i].metacritic <= 74)
+                        {
+                            <p style="color:yellow"> @Model[0][i].metacritic </p>
+                        }
+                        else if (Model[0][i].metacritic <= 49)
+                        {
+                            <p style="color:red"> @Model[0][i].metacritic </p>
+                        }
+                    }<br />
+                <td>
+                    @if (Model[0][i].userrating == -1)
+                    {
+                        <form action="../Game/AddUserRating" method="post">
+                            <input type="number" min="0" max="100" name="UserRating" required />
+                            <input type="number" name="id" value="@Model[0][i].id" hidden />
+                            <input type="submit" value="submit" />
+                        </form>
+
+                    }
+                    else
+                    {
+                        @Model[0][i].userrating
+                    }
+                </td>
+
+                <td>
+                    <form action="../Game/DeleteFavorite?id=@Model[0][i].id" method="post">
+                        <input type="submit" class="btn-danger" value="Remove From Favorites" />
                     </form>
-
-                }
-                else
-                {
-                    @Model[0][i].userrating
-                }
-            </td>
-
-            <td>
-                <img src="@Model[0][i].background_image" style="width:200px;height:200px" /><br />
-            </td>
-
-            <td>
-                <form action="../Game/DeleteFavorite?id=@Model[0][i].id" method="post">
-                    <input type="submit" class="btn-danger" value="Remove From Favorites" />
-                </form>
-            </td>
-        </tr>
-    </table>
+                </td>
+            </tr>
+        </table>
+    </a>
 }
 
 <br />
@@ -86,30 +92,28 @@ else
 <br />
 @for (int i = 0; i < Model[1].Count; i++)
 {
-    <table class="table table-hover table-info" style="table-layout:fixed;width:50%">
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Background Image
-            </th>
-        </tr>
-        <tr class="thread-dark">
+<a href="../Game/GameDetails?id=@Model.[1][i].id" method="post">
+    <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
+
+        <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
+            url( @Model[1][i].background_image ); background-size:cover;">
+
+            <td style="color:white; font-size:25px;">@Model[1][i].name<br /></td>
 
             <td>
-                <a href="../Game/GameDetails?id=@Model[1][i].id" method="post">@Model[1][i].name<br /></a>
-            </td>
-
-            <td>
-                <img src="@Model[1][i].background_image" style="width:100px;height:100px" /><br />
-            </td>
-
-            <td>
-                <form action="../Game/AddToFavorites?id=@Model[1][i].id" method="post">
+            @if (!Model[1][i].isfavorite)
+            {
+                <form action="../Game/AddToFavorites?id=@Model.[1][i].id" method="post">
                     <input type="submit" class="btn-success" value="Add to Favorites" />
                 </form>
-            </td>
+            }
+            else
+            {
+                <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
+            }
+            <br />
+
         </tr>
     </table>
+</a>
 }

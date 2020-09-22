@@ -4,40 +4,39 @@
 
 @model List<Result>
 
-<h1 class="display-1">User History</h1>
+<h1 class="display-1" style="color:white;">User History</h1>
 
 @for (int i = 0; i < Model.Count; i++)
-{
-    <table class="table table-hover table-info" style="table-layout:fixed">
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Metacritic Score
-            </th>
-            <th>
-                Background Image
-            </th>
-        </tr>
-        <tr class="thread-dark">
-            <td>
-                <a href="../Game/GameDetails?id=@Model[i].id" method="post">@Model[i].name<br /></a>
-            </td>
+{<a href="../Game/GameDetails?id=@Model[i].id" method="post">
+     <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
 
-            <td>
-                @if (Model[i].metacritic == null)
-                {
-                    <a>Not availabile</a>
-                }
-                else
-                {
-                    @Model[i].metacritic
-                }
-                <br />
-            </td>
+         <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
+             url( @Model[i].background_image ); background-size:cover;">
 
-            <td><img src="@Model[i].background_image" style="width:200px;height:200px" /><br /></td>
-        </tr>
-    </table>
+             <td style="color:white; font-size:25px;">@Model[i].name<br /></td>
+
+             <td style="font-size:30px;">
+                 @if (Model[i].metacritic == 0)
+                 {
+                     <p>Not Available</p>
+                 }
+                 else
+                 {
+                     if (Model[i].metacritic >= 75)
+                     {
+                         <p style="color:green"> @Model[i].metacritic </p>
+                     }
+                     else if (Model[i].metacritic >= 50 && Model[i].metacritic <= 74)
+                     {
+                         <p style="color:yellow"> @Model[i].metacritic </p>
+                     }
+                     else if (Model[i].metacritic <= 49)
+                     {
+                         <p style="color:red"> @Model[i].metacritic </p>
+                     }
+                 }<br />
+             </td>
+         </tr>
+     </table>
+    </a>
 }

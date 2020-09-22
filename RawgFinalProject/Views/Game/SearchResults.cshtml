@@ -1,55 +1,67 @@
 ﻿
 @model SearchResult
 
+<style>
+    table.center {
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-<h2 style="text-align: center">@ViewBag.Header</h2><br />
+    .disabledbutton {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+
+
+
+<h2 style=" color: white; text-align: center">@ViewBag.Header</h2>
+<br />
 
 @for (int i = 0; i < Model.results.Length; i++)
 {
 
+    <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">
+        <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
 
-    <table class="table table-hover table-info" style="table-layout:fixed">
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Metacritic Score
-            </th>
-            <th style="width:300px;">
-                Background Image
-            </th>
-            <th></th>
-        </tr>
-        <tr class="thread-dark">
-            <td> <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">@Model.results[i].name<br /></a></td>
-           
-            
-            <td>
-                @if (Model.results[i].metacritic == null)
-                {
-                    <p>Not Available</p>
-                }
-                else
-                {
-                    @Model.results[i].metacritic
-                }<br />
-            </td>
-            <td><img src="@Model.results[i].background_image" style="width:300px;height:300px" /><br /></td>
+            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)), 
+                url( @Model.results[i].background_image ); background-size:cover;">
 
-            <td>
-                @if (!Model.results[i].isfavorite)
-                {
-                    <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
-                        <input type="submit" class="btn-success" value="Add to Favorites" />
+                <td style="color:white; font-size:25px;">@Model.results[i].name<br /></td>
 
-                    </form>
-                }
-                else
-                {
-                    <p>This game is already a favorite!<br /> checkout one of our recommendations!</p>
-                }
-            </td>
-        </tr>
-</table>
-}
+                <td style="font-size:30px;">
+                    @if (Model.results[i].metacritic == 0)
+                    {
+                        <p>Not Available</p>
+                    }
+                    else
+                    {
+                        if (Model.results[i].metacritic >= 75)
+                        {
+                            <p style="color:green"> @Model.results[i].metacritic </p>
+                        }
+                        else if (Model.results[i].metacritic >= 50 && Model.results[i].metacritic <= 74)
+                        {
+                            <p style="color:yellow"> @Model.results[i].metacritic </p>
+                        }
+                        else if (Model.results[i].metacritic <= 49)
+                        {
+                            <p style="color:red"> @Model.results[i].metacritic </p>
+                        }
+                    }<br />
+                </td>
+                <td>
+                    @if (!Model.results[i].isfavorite)
+                    {
+                        <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
+                            <input type="submit" class="btn-success" value="Add to Favorites" />
+
+                        </form>
+                    }
+                    else
+                    { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
+                    }<br />
+            </tr>
+        </table>
+    </a>
+        }
