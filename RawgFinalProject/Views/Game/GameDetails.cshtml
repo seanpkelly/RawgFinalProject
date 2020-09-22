@@ -32,7 +32,7 @@
     @for (int i = 0; i < Model.developers.Length; i++)
         if (i < Model.developers.Length - 1)
         {
-    <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" method="post"> @($"{Model.developers[i].name}")</a><span>,&nbsp</span>
+            <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" method="post"> @($"{Model.developers[i].name}")</a><span>,&nbsp</span>
         }
         else
         {
@@ -72,12 +72,22 @@
 }
 @if (Model.clip != null)
 {
-<video width="320" height="240" controls autoplay muted>
-    <source src="@Model.clip.clips.full" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+    <video width="320" height="240" controls autoplay muted>
+        <source src="@Model.clip.clips.full" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 }
 <br />
 <a href="../Game/SeeMoreGamesLikeThis?id=@Model.id">See more games like this one!</a>
+<br />
+@if (!Model.isFavorite)
+{
+    <form action="../Game/AddToFavorites?id=@Model.id" method="post">
+        <input type="submit" class="btn-success" value="Add to Favorites" />
 
-
+    </form>
+}
+else
+{
+    <p>This game is already a favorite!<br /> checkout one of our recommendations!</p>
+}

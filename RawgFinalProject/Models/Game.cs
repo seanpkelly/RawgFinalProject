@@ -63,6 +63,7 @@ namespace RawgFinalProject.Models
         public Clip clip { get; set; }
         public string description_raw { get; set; }
         public double recommendationScore { get; set; }
+        public bool isFavorite { get; set; }
     }
 
     public class ESRB

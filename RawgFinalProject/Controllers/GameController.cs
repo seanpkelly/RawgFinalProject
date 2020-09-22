@@ -125,12 +125,23 @@ namespace RawgFinalProject.Controllers
         [Authorize]
         public async Task<IActionResult> GameDetails(int id)
         {
-            Result searchedGame = await SearchResultById(id);
-            Game searchedGame2 = await SearchGameById(id);
-            AddToHistory(searchedGame);
+            Game searchedGame = await SearchGameById(id);
+            
+            //SearchResult searchResult = await _gameDAL.GetGameSearch(id.ToString());
+            string activeUserId = GetActiveUser();
 
-            //searchedGame.esrb = (esrb)searchedGame2.esrb_rating;
-            return View(searchedGame2);
+            //for (int i = 0; i < searchResult.results.Length; i++)
+            //{
+            UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == searchedGame.id).FirstOrDefault();
+            if (checkForDupes != null)
+            {
+                searchedGame.isFavorite = true;
+            }
+            //}
+
+
+
+            return View(searchedGame);
         }
         #endregion
 
@@ -393,14 +404,8 @@ namespace RawgFinalProject.Controllers
 
             string genre = form["genre"];
             string tag = form["tag"];
-            //List<Dictionary<string, double>> weights = await GenerateWeights();
-
-            //string genreQuery = CreateQuery(weights[0]);
-            //string tagQuery = CreateQuery(weights[1]);
 
             List<Result> recommendationResultPool = await GenerateQuestionnaireResults(genre, tag);
-
-            //List<Result> orderedRecs = GenerateScores(recommendationResultPool, weights);
 
             return View("QuestionnaireResults", recommendationResultPool);
         }

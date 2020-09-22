@@ -15,15 +15,13 @@
 <h3>Take this questionnaire to find out what kind of games you may like. <br />Wether you're new to gaming or just looking to try something new!</h3>
 <form action="../Game/GenerateQuestionnaireRecommendations" method="post">
     <h2>Here are our genres,<br />please select any of these tags that interest you!</h2>
-    <ul class="custom-checkbox">
-        @for (int i = 0; i < genres.Length; i++)
-        {
-            <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" />
-            <label for="@genres[i]"> <b>@genres[i]</b> </label>
-            <br />
-        }
-    </ul>
-   <br /> <h2>Please select any of these tags that interest you!<br />Some of these tags will seem redundant, <br />because there is some overlap with genres.</h2><br />
+    @for (int i = 0; i < genres.Length; i++)
+    {
+        <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" />
+        <label for="@genres[i]"><b>@genres[i]</b></label>
+    }
+
+    <br /> <h2>Please select any of these tags that interest you!<br />Some of these tags will seem redundant, <br />because there is some overlap with genres.</h2><br />
     @for (int i = 0; i < tags.Length; i++)
     {
         <input type="checkbox" id="@tags[i]" name="tag" value="@tags[i]" />
@@ -35,4 +33,3 @@
 
 
 </form>
-
