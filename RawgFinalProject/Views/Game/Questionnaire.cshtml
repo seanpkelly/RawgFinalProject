@@ -12,16 +12,16 @@
                 "Space", "Zombies", "Point & Click", "Action-Adventure", "Hack and Slash", "Side Scroller", "Survival Horror", "RTS", "Roguelike", "mmo", "Driving", "Puzzle",
                 "MMORPG", "Management", "JRPG" };}
 <h1 class="display-1">Questionnaire</h1>
-<h3>Take this questionnaire to find out what kind of games you may like. <br />Wether you're new to gaming or just looking to try something new!</h3>
+<h3>Take this questionnaire to find out what kind of games you may like. <br /><br />You may be new to gaming or just looking to try something new!</h3><br />
 <form action="../Game/GenerateQuestionnaireRecommendations" method="post">
-    <h2>Here are our genres,<br />please select any of these tags that interest you!</h2>
+    <h2>Below is a list of genres.<br />Please select any of these genres that sound interesting to you!</h2>
     @for (int i = 0; i < genres.Length; i++)
     {
         <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" />
         <label for="@genres[i]"><b>@genres[i]</b></label><br />
     }
 
-    <br /> <h2>Please select any of these tags that interest you!<br />Some of these tags will seem redundant, <br />because there is some overlap with genres.</h2><br />
+    <br /><br /> <h2>Please select any of these tags that interest you as well!<br />Some of these tags will seem redundant, <br />because there is some overlap with genres.</h2><br />
     @for (int i = 0; i < tags.Length; i++)
     {
         <input type="checkbox" id="@tags[i]" name="tag" value="@tags[i]" />

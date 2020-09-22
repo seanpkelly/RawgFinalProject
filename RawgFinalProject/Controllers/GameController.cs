@@ -157,6 +157,8 @@ namespace RawgFinalProject.Controllers
 
             List<Result> convertedFavoritesList = new List<Result>();
 
+            DateTime time1 = DateTime.Now;
+
             for (int i = 0; i < favList.Count; i++)
             {
                 convertedFavoritesList.Add(await SearchResultById(favList[i].GameId));
@@ -164,15 +166,15 @@ namespace RawgFinalProject.Controllers
                 convertedFavoritesList[i].favoritecount = favList[i].FavoriteCount;
             }
 
+            DateTime time2 = DateTime.Now;
+
             var historyList = await _gameContext.UserHistory.Where(x => x.UserId == activeUserId).ToListAsync();
             List<Result> convertedHistoryList = new List<Result>();
-
 
             for (int i = 0; i < historyList.Count; i++)
             {
                 convertedHistoryList.Add(await SearchResultById(historyList[i].GameId));
             }
-
 
             List<List<Result>> favesAndHistory = new List<List<Result>>();
             favesAndHistory.Add(convertedFavoritesList);
