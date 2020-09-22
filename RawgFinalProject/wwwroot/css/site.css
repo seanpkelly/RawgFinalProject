@@ -10,6 +10,13 @@ div {
     font-family: myFirstFont;
 }
 
+.navBarFont{
+    font-size: 13px;
+}
+
+body, h1, h2, h3, h4, h5, h6 * {
+    color: white;
+}
 
 a.navbar-brand {
   white-space: normal;
@@ -29,9 +36,9 @@ a {
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 /* Sticky footer styles
