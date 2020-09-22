@@ -182,7 +182,6 @@ namespace RawgFinalProject.Controllers
         [Authorize]
         public IActionResult AddToFavorites(int id)
         {
-            //Turn into method call: CallIdString
             string activeUserId = GetActiveUser();
 
             UserFavorite f = new UserFavorite();
@@ -192,7 +191,15 @@ namespace RawgFinalProject.Controllers
             f.IsFavorite = true;
             f.UserRating = -1;
 
+
+
+
+
             //add code to remove game from history list if its added to favorites
+
+
+
+
 
             //check for dupes does not throw an error message or return to search results correctly yet
             UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
@@ -201,7 +208,18 @@ namespace RawgFinalProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                   ////iterate favorite counter here///////////////////////////////////////////////////////
+                    ////iterate favorite counter here///////////////////////////////////////////////////////
+
+                    UserFavorite favorite = _gameContext.UserFavorite.Where(f => f.GameId == id).FirstOrDefault();
+
+                    //foreach (var fav in favorite)
+                    //{
+                    //    fav.FavoriteCount++;
+                    //    _gameContext.Entry(fav).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    //    _gameContext.Update(fav);
+                    //    _gameContext.SaveChanges();
+                    //}
+                    
                     _gameContext.UserFavorite.Add(f);
                     _gameContext.SaveChanges();
                 }
