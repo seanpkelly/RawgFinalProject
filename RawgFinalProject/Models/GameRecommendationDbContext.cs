@@ -6,6 +6,7 @@ namespace RawgFinalProject.Models
 {
     public partial class GameRecommendationDbContext : DbContext
     {
+
         private readonly string connectionString;
         public GameRecommendationDbContext(string _connectionString)
         {
@@ -28,7 +29,6 @@ namespace RawgFinalProject.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
-        public virtual DbSet<SearchList> SearchList { get; set; }
         public virtual DbSet<UserFavorite> UserFavorite { get; set; }
         public virtual DbSet<UserHistory> UserHistory { get; set; }
         public virtual DbSet<WishList> WishList { get; set; }
@@ -142,18 +142,13 @@ namespace RawgFinalProject.Models
                 entity.Property(e => e.UserName).HasMaxLength(256);
             });
 
-            modelBuilder.Entity<SearchList>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.GameId).HasColumnName("GameID");
-
-                entity.Property(e => e.GameName).HasMaxLength(150);
-            });
-
             modelBuilder.Entity<UserFavorite>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.FavoriteCount)
+                    .HasColumnName("favoriteCount")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.GameId).HasColumnName("GameID");
 

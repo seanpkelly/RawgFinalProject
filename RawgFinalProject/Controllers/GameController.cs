@@ -201,6 +201,7 @@ namespace RawgFinalProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                   ////iterate favorite counter here///////////////////////////////////////////////////////
                     _gameContext.UserFavorite.Add(f);
                     _gameContext.SaveChanges();
                 }
@@ -243,6 +244,8 @@ namespace RawgFinalProject.Controllers
 
             if (deleteItem != null)
             {
+
+                ////decrement favorite counter here////////////////////////////////////////////////
                 _gameContext.UserFavorite.Remove(deleteItem);
                 _gameContext.SaveChanges();
             }
