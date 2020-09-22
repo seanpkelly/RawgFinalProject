@@ -3,58 +3,58 @@
     ViewData["Title"] = "IndieGames";
 }
 
-<h1 class="display-1">Indie Games</h1>
+<h1 class="display-1" style="text-align:center">Indie Games</h1>
 <br />
 
 @model SearchResult
-<h3>Here is a collection of our most popular Indie Games!</h3>
-<h4>Support your local Indie Game developer</h4> 
+<h3 style="text-align:center">Here is a collection of our most popular Indie Games!</h3>
+<h4 style="text-align:center">Support your local Indie Game developer</h4>
+
 @for (int i = 0; i < Model.results.Length; i++)
 {
 
 
-    <table class="table table-hover table-info" style="table-layout:fixed">
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Metacritic Score
-            </th>
-            <th style="width:300px;">
-                Background Image
-            </th>
-        </tr>
-        <tr class="thread-dark">
-            <td> <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">@Model.results[i].name<br /></a></td>
+    <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">
+        <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
 
+            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)), 
+                url( @Model.results[i].background_image ); background-size:cover;">
 
-            <td>
-                @if (Model.results[i].metacritic == null)
-                {
-                    <p>Not Available</p>
-                }
-                else
-                {
-                    @Model.results[i].metacritic
-                }<br />
-            </td>
-            <td><img src="@Model.results[i].background_image" style="width:300px;height:300px" /><br /></td>
+                <td style="color:white; font-size:25px;">@Model.results[i].name</td>
+                <td style="font-size:30px;">
+                    @if (Model.results[i].metacritic == 0)
+                    {
+                        <p>Not Available</p>
+                    }
+                    else
+                    {
+                        if (Model.results[i].metacritic >= 75)
+                        {
+                            <p style="color:green"> @Model.results[i].metacritic </p>
+                        }
+                        else if (Model.results[i].metacritic >= 50 && Model.results[i].metacritic <= 74)
+                        {
+                            <p style="color:yellow"> @Model.results[i].metacritic </p>
+                        }
+                        else if (Model.results[i].metacritic <= 49)
+                        {
+                            <p style="color:red"> @Model.results[i].metacritic </p>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (!Model.results[i].isfavorite)
+                    {
+                        <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
+                            <input type="submit" class="btn-success" value="Add to Favorites" />
 
-            <td>
-                @if (!Model.results[i].isfavorite)
-                {
-                    <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
-                        <input type="submit" class="btn-success" value="Add to Favorites" />
-
-                    </form>
-                }
-                else
-                {
-                    <p>This game is already a favorite!<br /> checkout one of our recommendations!</p>
-                }
-            </td>
-        </tr>
-    </table>
-}
+                        </form>
+                    }
+                    else
+                    { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
+                    }
+</tr>
+        </table>
+    </a>
+        }
 

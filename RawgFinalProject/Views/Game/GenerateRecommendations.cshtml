@@ -12,7 +12,7 @@
 @for (int i = 0; i < 30; i++)
 {
     <a href="../Game/GameDetails?id=@Model[i].id" method="post">
-        <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
+        <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
                 url( @Model[i].background_image ); background-size:cover;">
@@ -38,7 +38,7 @@
                         {
                             <p style="color:red"> @Model[i].metacritic </p>
                         }
-                    }<br />
+                    }
                 </td>
                 <td>
                     @if (!Model[i].isfavorite)
@@ -50,7 +50,7 @@
                     }
                     else
                     { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
-                    }<br />
+                    }
 
             <td>
                 @Model[i].recommendationScore
@@ -61,10 +61,7 @@
                     <input type="submit" class="btn-primary" value="Add to Wishlist" />
                 </form>
             </td>
-
-            </tr>
-
-
+             </tr>
         </table>
     </a>
-        }
+}

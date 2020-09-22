@@ -14,17 +14,18 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+
     </style>
 
-<h1 class="display-1" style="color:white;">Here are your Favorite Games!</h1>
+<h1 style="text-align: center">Here are your Favorite Games!</h1>
 @if (Model[0].Count < 5)
 {
-    <p>Please add at least five games to your favorites list to be able to generate recommendations!</p>
+    <p style="text-align:center">Please add at least five games to your favorites list to be able to generate recommendations!</p>
 }
 else
 {
     <td>
-        <form action="../Game/GenerateRecommendations" method="post">
+        <form action="../Game/GenerateRecommendations" method="post" style=" color: yellow; text-align: center; width:100px; height:50px">
             <input type="submit" class="btn-success" value="Get Recommendations!" />
         </form>
     </td>
@@ -32,13 +33,12 @@ else
 
 @for (int i = 0; i < Model[0].Count; i++)
 {
-    <a href="../Game/GameDetails?id=@Model[0][i].id" method="post">
-        <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
+        <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
                 url( @Model[0][i].background_image ); background-size:cover;">
 
-                <td style="color:white; font-size:25px;">@Model[0][i].name<br /></td>
+                <td><a href="../Game/GameDetails?id=@Model[0][i].id" method="post" style="color: white; font-size:25px;">@Model[0][i].name</a></td>
 
 
                 <td style="font-size:30px;">
@@ -61,7 +61,7 @@ else
                         {
                             <p style="color:red"> @Model[0][i].metacritic </p>
                         }
-                    }<br />
+                    }
                 <td>
                     @if (Model[0][i].userrating == -1)
                     {
@@ -77,8 +77,6 @@ else
                     {
                         @Model[0][i].userrating
                     }
-                </td>
-
                 <td>
                     <form action="../Game/DeleteFavorite?id=@Model[0][i].id" method="post">
                         <input type="submit" class="btn-danger" value="Remove From Favorites" />
@@ -88,26 +86,26 @@ else
                 </td>
             </tr>
         </table>
-    </a>
 }
 
 <br />
 <h4>We see you've viewed the details of these games as well.<br /> Would you like to add them to your favorites?</h4>
 <br />
+
 @for (int i = 0; i < Model[1].Count; i++)
 {
 <a href="../Game/GameDetails?id=@Model.[1][i].id" method="post">
-    <table class="table table-borderless center" style="table-layout:fixed; width:75%; height:44%;">
+    <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
         <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
             url( @Model[1][i].background_image ); background-size:cover;">
 
-            <td style="color:white; font-size:25px;">@Model[1][i].name<br /></td>
+            <td style="font-size:25px;">@Model[1][i].name<br /></td>
 
             <td>
             @if (!Model[1][i].isfavorite)
             {
-                <form action="../Game/AddToFavorites?id=@Model.[1][i].id" method="post">
+                <form action="../Game/AddToFavorites?id=@Model[1][i].id" method="post">
                     <input type="submit" class="btn-success" value="Add to Favorites" />
                 </form>
             }
@@ -115,8 +113,6 @@ else
             {
                 <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
             }
-            <br />
-
         </tr>
     </table>
 </a>
