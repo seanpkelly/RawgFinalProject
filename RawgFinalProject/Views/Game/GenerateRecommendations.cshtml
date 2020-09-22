@@ -3,7 +3,7 @@
     ViewData["Title"] = "Game Recommendations";
 }
 
-<h1 class="display-1">Game Recommendations</h1>
+<h1 class="display-1" style="text-align: center;">Game Recommendations</h1>
 
 @model List<Result>
 
@@ -15,7 +15,7 @@
         <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
-                url( @Model[i].background_image ); background-size:cover;">
+                url( @Model[i].background_image ); background-size:cover;" border-radius: 5px;>
 
                 <td style="color:white; font-size:25px;">@Model[i].name<br /></td>
 
@@ -42,6 +42,11 @@
                     }
                 </td>
                 <td>
+                    <p style="color:white; font-size:25px;"> Rec. Score:</p>
+                    <p style="color:white; font-size:40px;"> @Model[i].recommendationScore</p>
+                </td>
+
+                <td>
                     @if (!Model[i].isfavorite)
                     {
                         <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
@@ -52,12 +57,7 @@
                     else
                     { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
                     }
-
-                <td>
-                    @Model[i].recommendationScore
-                </td>
-
-                <td>
+                    <br />
                     <form action="../Game/AddToWishlist?id=@Model[i].id" method="post">
                         <input type="submit" class="btn-primary" value="Add to Wishlist" />
                     </form>

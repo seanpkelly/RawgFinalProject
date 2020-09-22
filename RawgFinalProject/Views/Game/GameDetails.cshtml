@@ -17,9 +17,9 @@
     }
 </style>
 
-<h2>@Model.name</h2>
+<h2 style="font-size:40px;">@Model.name</h2>
 
-<p>Game Description: @Model.description_raw</p>
+<p>Game Description: <br />@Model.description_raw</p>
 
 <p>Metacritic Score: @Model.metacritic</p>
 
@@ -72,7 +72,7 @@
     {
         <p>@store.store.name</p>
     }
-    <p><a href="https://www.amazon.com/s?k=@Model.name" target="_blank">Amazon</a></p>
+    <p><a href="https://www.amazon.com/s?k=@Model.name" target="_blank" rel="noopener noreferrer" style="border:none;text-decoration:none"><img src="https://www.niftybuttons.com/amazon/amazon-button2.png"></a></p>
 </td>
 
 <p>
