@@ -11,34 +11,33 @@
 <h4 style="text-align:center">Support your local Indie Game developer</h4>
 
 @for (int i = 0; i < Model.results.Length; i++)
-{
+{<a href="../Game/GameDetails?id=@Model.results[i].id" method="post">
+        <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
-
-    <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">
-        <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
-
-            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)), 
+            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
                 url( @Model.results[i].background_image ); background-size:cover;">
 
-                <td style="color:white; font-size:25px;">@Model.results[i].name</td>
-                <td style="font-size:30px;">
-                    @if (Model.results[i].metacritic == 0)
+                <td style="color: white; font-size:30px;">@Model.results[i].name</td>
+
+                <td>
+                    <p style="color:white; font-size:25px;">Metacritic</p>
+                    @if (Model.results[i].metacritic == null)
                     {
-                        <p>Not Available</p>
+                        <p style="color:white; font-size:40px;">N/A</p>
                     }
                     else
                     {
                         if (Model.results[i].metacritic >= 75)
                         {
-                            <p style="color:green"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:green; height:60px; width:60px; border-radius: 5px;"> @Model.results[i].metacritic </p>
                         }
                         else if (Model.results[i].metacritic >= 50 && Model.results[i].metacritic <= 74)
                         {
-                            <p style="color:yellow"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; width:60px; border-radius: 5px;;"> @Model.results[i].metacritic </p>
                         }
                         else if (Model.results[i].metacritic <= 49)
                         {
-                            <p style="color:red"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; border-radius: 5px;"> @Model.results[i].metacritic </p>
                         }
                     }
                 </td>
@@ -53,8 +52,8 @@
                     else
                     { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
                     }
-</tr>
+            </tr>
         </table>
     </a>
-        }
+}
 

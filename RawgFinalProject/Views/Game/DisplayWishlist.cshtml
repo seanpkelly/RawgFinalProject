@@ -3,63 +3,59 @@
     ViewData["Title"] = "DisplayWishlist";
 }
 
-
-
 <h1 class="display-1" style="text-align: center">Wish List</h1>
 
 @model List<Result>
 
 @for (int i = 0; i < Model.Count; i++)
-{
-    <table class="table table-hover table-info" style="table-layout:fixed">
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Metacritic Score
-            </th>
-            <th>
-                Places to Purchase
-            </th>
-            <th>
-                Background Image
-            </th>
-        </tr>
-        <tr class="thread-dark">
+{<a href="../Game/GameDetails?id=@Model[i].id" method="post">
+        <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
-            <td>
-                <a href="../Game/GameDetails?id=@Model[i].id" method="post">@Model[i].name<br /></a>
-            </td>
+            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
+                url( @Model[i].background_image ); background-size:cover;">
 
-            <td>
-                @if (Model[i].metacritic == null)
-                {
-                    <a>Not availabile</a>
-                }
-                else
-                {
-                    @Model[i].metacritic
-                }
-                <br />
-            </td>
-            <td>
-                @foreach (var store in Model[i].stores)
-                {
-                    <p>@store.store.name</p>
-                }
-                <p><a href="https://www.amazon.com/s?k=@Model[i].name" target="_blank">Amazon</a></p>
-            </td>
+                <td style="color: white; font-size:30px;">@Model[i].name</td>
 
-            <td>
-                <img src="@Model[i].background_image" style="width:200px;height:200px" /><br />
-            </td>
+                <td>
+                    <p style="color:white; font-size:25px;">Metacritic</p>
+                    @if (Model[i].metacritic == null)
+                    {
+                        <p style="color:white; font-size:40px;">N/A</p>
+                    }
+                    else
+                    {
+                        if (Model[i].metacritic >= 75)
+                        {
+                            <p style="color:white; font-size:40px; background-color:green; height:60px; width:60px; border-radius: 5px;"> @Model[i].metacritic </p>
+                        }
+                        else if (Model[i].metacritic >= 50 && Model[i].metacritic <= 74)
+                        {
+                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; width:60px; border-radius: 5px;;"> @Model[i].metacritic </p>
+                        }
+                        else if (Model[i].metacritic <= 49)
+                        {
+                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; border-radius: 5px;"> @Model[i].metacritic </p>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (!Model[i].isfavorite)
+                    {
+                        <form action="../Game/AddToFavorites?id=@Model[i].id" method="post">
+                            <input type="submit" class="btn-success" value="Add to Favorites" />
 
-            <td>
-                <form action="../Game/DeleteWishlist?id=@Model[i].id" method="post">
-                    <input type="submit" class="btn-danger" value="Remove From Wishlist" />
-                </form>
-            </td>
-        </tr>
-    </table>
+                        </form>
+                    }
+                    else
+                    { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
+                    }
+                </td>
+                <td>
+                    <form action="../Game/DeleteWishlist?id=@Model[i].id" method="post">
+                        <input type="submit" class="btn-danger" value="Remove From Wishlist" />
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </a>
 }

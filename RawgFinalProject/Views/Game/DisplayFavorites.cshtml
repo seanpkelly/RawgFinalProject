@@ -15,6 +15,8 @@
             cursor: not-allowed;
         }
 
+
+
     </style>
 
 <h1 style="text-align: center">Here are your Favorite Games!</h1>
@@ -25,7 +27,7 @@
 else
 {
     <td>
-        <form action="../Game/GenerateRecommendations" method="post" style=" color: yellow; text-align: center; width:100px; height:50px">
+        <form action="../Game/GenerateRecommendations" method="post">
             <input type="submit" class="btn-success" value="Get Recommendations!" />
         </form>
     </td>
@@ -38,36 +40,37 @@ else
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
                 url( @Model[0][i].background_image ); background-size:cover;">
 
-                <td><a href="../Game/GameDetails?id=@Model[0][i].id" method="post" style="color: white; font-size:25px;">@Model[0][i].name</a></td>
+                <td><a href="../Game/GameDetails?id=@Model[0][i].id" method="post" style="color: white; font-size:30px;">@Model[0][i].name</a></td>
 
 
-                <td style="font-size:30px;">
-                    @if (Model[0][i].metacritic == 0)
+                <td>
+                    <p style="color:white; font-size:25px;">Metacritic</p>
+                    @if (Model[0][i].metacritic == null)
                     {
-                        <p>Not Available</p>
+                        <p style="color:white; font-size:40px;">N/A</p>
                     }
                     else
                     {
-                        <p>Metacritic</p>
                         if (Model[0][i].metacritic >= 75)
                         {
-                            <p style="color:green"> @Model[0][i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:green; height:60px; width:60px; border-radius: 5px;"> @Model[0][i].metacritic </p>
                         }
                         else if (Model[0][i].metacritic >= 50 && Model[0][i].metacritic <= 74)
                         {
-                            <p style="color:yellow"> @Model[0][i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; width:60px; border-radius: 5px;;"> @Model[0][i].metacritic </p>
                         }
                         else if (Model[0][i].metacritic <= 49)
                         {
-                            <p style="color:red"> @Model[0][i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; border-radius: 5px;"> @Model[0][i].metacritic </p>
                         }
                     }
+                </td>
                 <td>
                     @if (Model[0][i].userrating == -1)
                     {
-                        <p>User Score</p>
+                        <p style="color: white; font-size:25px;">User Score</p>
                         <form action="../Game/AddUserRating" method="post">
-                            <input type="number" min="0" max="100" name="UserRating" required placeholder="0-100"/>
+                            <input type="number" min="0" max="100" name="UserRating" required placeholder="0-100" style="width:30%" />
                             <input type="number" name="id" value="@Model[0][i].id" hidden />
                             <input type="submit" value="submit" />
                         </form>
@@ -82,7 +85,7 @@ else
                         <input type="submit" class="btn-danger" value="Remove From Favorites" />
                     </form>
                     <br />
-                    <p>@($"{Model[0][i].favoritecount} other users also have favorited this game!")</p>
+                    <p style="color: white;">@($"{Model[0][i].favoritecount} other users also have favorited this game!")</p>
                 </td>
             </tr>
         </table>
@@ -100,7 +103,7 @@ else
         <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
             url( @Model[1][i].background_image ); background-size:cover;">
 
-            <td style="font-size:25px;">@Model[1][i].name<br /></td>
+            <td style=" color: white; font-size:25px;">@Model[1][i].name<br /></td>
 
             <td>
             @if (!Model[1][i].isfavorite)

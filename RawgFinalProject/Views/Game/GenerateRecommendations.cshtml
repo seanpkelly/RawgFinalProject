@@ -19,24 +19,25 @@
 
                 <td style="color:white; font-size:25px;">@Model[i].name<br /></td>
 
-                <td style="font-size:30px;">
-                    @if (Model[i].metacritic == 0)
+                <td>
+                    <p style="color:white; font-size:25px;">Metacritic</p>
+                    @if (Model[i].metacritic == null)
                     {
-                        <p>Not Available</p>
+                        <p style="color:white; font-size:40px;">N/A</p>
                     }
                     else
                     {
                         if (Model[i].metacritic >= 75)
                         {
-                            <p style="color:green"> @Model[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:green; height:60px; width:60px; border-radius: 5px;"> @Model[i].metacritic </p>
                         }
                         else if (Model[i].metacritic >= 50 && Model[i].metacritic <= 74)
                         {
-                            <p style="color:yellow"> @Model[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; width:60px; border-radius: 5px;;"> @Model[i].metacritic </p>
                         }
                         else if (Model[i].metacritic <= 49)
                         {
-                            <p style="color:red"> @Model[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; border-radius: 5px;"> @Model[i].metacritic </p>
                         }
                     }
                 </td>
@@ -52,16 +53,16 @@
                     { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
                     }
 
-            <td>
-                @Model[i].recommendationScore
-            </td>
+                <td>
+                    @Model[i].recommendationScore
+                </td>
 
-            <td>
-                <form action="../Game/AddToWishlist?id=@Model[i].id" method="post">
-                    <input type="submit" class="btn-primary" value="Add to Wishlist" />
-                </form>
-            </td>
-             </tr>
+                <td>
+                    <form action="../Game/AddToWishlist?id=@Model[i].id" method="post">
+                        <input type="submit" class="btn-primary" value="Add to Wishlist" />
+                    </form>
+                </td>
+            </tr>
         </table>
     </a>
 }
