@@ -106,11 +106,11 @@ namespace RawgFinalProject.Controllers
 
             foreach (var genre in game.genres)
             {
-                genreQuery += genre.name + ",";
+                genreQuery += genre.name.ToLower() + ",";
             }
             foreach (var tag in game.tags)
             {
-                tagQuery += tag.name + ",";
+                tagQuery += tag.name.Replace(" ", "-").ToLower() + ",";
             }
 
             tagQuery = tagQuery.Substring(0, tagQuery.Length - 1);
