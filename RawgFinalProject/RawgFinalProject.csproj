@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\slkscr.ttf" />
+    <None Include="wwwroot\images\wallpaper.jpg" />
   </ItemGroup>
 
   <ItemGroup>
