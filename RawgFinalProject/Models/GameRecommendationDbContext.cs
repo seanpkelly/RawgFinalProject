@@ -6,13 +6,11 @@ namespace RawgFinalProject.Models
 {
     public partial class GameRecommendationDbContext : DbContext
     {
-
         private readonly string connectionString;
         public GameRecommendationDbContext(string _connectionString)
         {
             connectionString = _connectionString;
         }
-
         public GameRecommendationDbContext()
         {
         }
@@ -29,6 +27,7 @@ namespace RawgFinalProject.Models
         public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<Questionnaire> Questionnaire { get; set; }
         public virtual DbSet<UserFavorite> UserFavorite { get; set; }
         public virtual DbSet<UserHistory> UserHistory { get; set; }
         public virtual DbSet<WishList> WishList { get; set; }
@@ -37,7 +36,6 @@ namespace RawgFinalProject.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
@@ -140,6 +138,30 @@ namespace RawgFinalProject.Models
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
 
                 entity.Property(e => e.UserName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<Questionnaire>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Genres)
+                    .IsRequired()
+                    .HasColumnName("genres")
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.Tags)
+                    .IsRequired()
+                    .HasColumnName("tags")
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Questionnaire)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Questionn__UserI__03F0984C");
             });
 
             modelBuilder.Entity<UserFavorite>(entity =>

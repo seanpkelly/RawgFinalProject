@@ -36,7 +36,20 @@ namespace RawgFinalProject.Controllers
 
         public IActionResult Questionnaire()
         {
-            return View();
+            string activeUserId = GetActiveUser();
+
+            //Creates list of favorites for the current user
+            List<string> questionnaireAnswers= new List<string>();
+
+            Questionnaire q = (_gameContext.Questionnaire.Where(x => x.UserId == activeUserId).FirstOrDefault());
+
+            if (q != null)
+            {
+                questionnaireAnswers.Add(q.Genres);
+                questionnaireAnswers.Add(q.Tags);
+            }
+
+            return View(questionnaireAnswers);
         }
 
         #region Search for Games
@@ -58,6 +71,7 @@ namespace RawgFinalProject.Controllers
             }
 
             ViewBag.Header = $"Results for {searchName}";
+            ViewBag.NoResults = "No results found.  Please try again.";
 
             return View("SearchResults", searchResult);
 
@@ -305,15 +319,20 @@ namespace RawgFinalProject.Controllers
             }
 
             List<UserFavorite> favorite = _gameContext.UserFavorite.Where(f => f.GameId == id).ToList();
-            int count = favorite.Max(m => m.FavoriteCount) - 1;
 
-            foreach (var fav in favorite)
+            if (favorite.Count > 0)
             {
-                fav.FavoriteCount = count;
-                _gameContext.Entry(fav).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                _gameContext.Update(fav);
-                _gameContext.SaveChanges();
+                int count = favorite.Max(m => m.FavoriteCount) - 1;
+
+                foreach (var fav in favorite)
+                {
+                    fav.FavoriteCount = count;
+                    _gameContext.Entry(fav).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _gameContext.Update(fav);
+                    _gameContext.SaveChanges();
+                }
             }
+            
 
             return RedirectToAction("DisplayFavorites");
         }
@@ -486,6 +505,35 @@ namespace RawgFinalProject.Controllers
             string genre = form["genre"];
             string tag = form["tag"];
 
+            //save questionnaire results here
+
+            string activeUserId = GetActiveUser();
+
+            Questionnaire qToUpdate = _gameContext.Questionnaire.Where(q => q.UserId == activeUserId).FirstOrDefault();
+
+            if (qToUpdate != null)
+            {
+                qToUpdate.Genres = genre;
+                qToUpdate.Tags = tag;
+
+                _gameContext.Entry(qToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                _gameContext.Update(qToUpdate);
+                _gameContext.SaveChanges();
+            }
+            else
+            {
+                Questionnaire q = new Questionnaire();
+
+                q.UserId = activeUserId;
+                q.Genres = genre;
+                q.Tags = tag;
+                if (ModelState.IsValid)
+                {
+                    _gameContext.Questionnaire.Add(q);
+                    _gameContext.SaveChanges();
+                }
+            }
+
             List<Result> recommendationResultPool = await GenerateQuestionnaireResults(genre, tag);
 
             if (recommendationResultPool.Count > 0)
@@ -513,6 +561,13 @@ namespace RawgFinalProject.Controllers
                     singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
                     foreach (var result in singlePageResults.results)
                     {
+                        string activeUserId = GetActiveUser();
+                        UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
+
+                        if (checkForDupes != null)
+                        {
+                            result.isfavorite = checkForDupes.IsFavorite;
+                        }
                         recommendationResultPool.Add(result);
                     }
                 }

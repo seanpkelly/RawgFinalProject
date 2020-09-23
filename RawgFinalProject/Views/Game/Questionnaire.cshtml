@@ -4,6 +4,8 @@
 
 }
 
+@model List<string>
+
 @section head{
     <style type="text/css">
         body {
@@ -12,7 +14,6 @@
     </style>
 }
 
-@model Game
 @{string[] genres = { "Action", "Indie", "Adventure", "RPG", "Strategy", "Shooter", "Casual", "Simulation", "Puzzle",
             "Arcade", "Platformer", "Racing", "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Games", "Educational", "Card" }; }
 @{string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi",
@@ -22,13 +23,30 @@
 <h1 class="display-3" style="text-align: center;">Questionnaire</h1>
 <h3>Take this questionnaire to find out what kind of games you may like. <br /><br />You may be new to gaming or just looking to try something new!</h3>
 <br />
+@if (Model[0] != "" && Model[1] != "")
+{
+    <h3>Since you've already taken the questionnaire, we've prepopulated it with your prior choices.</h3>
+    <form action="../Game/ResetQuestionnaire">
+        <input type="submit" value="Reset Questionnaire" />
+    </form><br />
+}
+
+
 <form action="../Game/GenerateQuestionnaireRecommendations" method="post">
     <h4 style="border:solid; color:white;">Below is a list of genres.<br />Please select any of these genres that sound interesting to you!</h4><br />
     @for (int i = 0; i < genres.Length; i++)
     {
         <div style="display: inline-block">
-            <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" />
-            <label for="@genres[i]">@genres[i]&nbsp;</label><br />
+            @if (Model[0].Contains(genres[i]))
+            {
+                <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" checked />
+                <label for="@genres[i]">@genres[i]&nbsp;</label><br />
+            }
+            else
+            {
+                <input type="checkbox" id="@genres[i]" name="genre" value="@genres[i]" />
+                <label for="@genres[i]">@genres[i]&nbsp;</label><br />
+            }
         </div>
     }
 
@@ -36,8 +54,18 @@
     @for (int i = 0; i < tags.Length; i++)
     {
         <div style="display: inline-block">
-            <input type="checkbox" id="@tags[i]" name="tag" value="@tags[i]" />
-            <label for="@tags[i]">@tags[i]&nbsp;</label><br />
+            @if (Model[1].Contains(tags[i]))
+            {
+                <input type="checkbox" id="@tags[i]" name="tag" value="@tags[i]" checked/>
+                <label for="@tags[i]">@tags[i]&nbsp;</label><br />
+            }
+            else
+            {
+                <input type="checkbox" id="@tags[i]" name="tag" value="@tags[i]" />
+                <label for="@tags[i]">@tags[i]&nbsp;</label><br />
+            }
+            
+        
         </div>
     }
 

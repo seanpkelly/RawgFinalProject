@@ -91,7 +91,15 @@ else
                     <input type="submit" class="btn-danger" value="Remove From Favorites" />
                 </form>
                 <br />
-                <p style="color: white;">@($"{Model[0][i].favoritecount} other users also have favorited this game!")</p>
+                @if (Model[0][i].favoritecount == 0)
+                {
+                    <p style="color: white;">@($"{Model[0][i].favoritecount} other users also have favorited this game!")</p>
+                }
+                else
+                {
+                    <p style="color: white;">@($"{Model[0][i].favoritecount -1} other users also have favorited this game!")</p>
+                }
+
             </td>
         </tr>
     </table>
@@ -112,7 +120,7 @@ else
 @for (int i = 0; i < Model[1].Count; i++)
 {
     <a href="../Game/GameDetails?id=@Model[1][i].id" method="post">
-        <table class="table table-borderless" style="table-layout:fixed; height:auto; width:auto;">
+        <table class="table table-borderless" style="table-layout:fixed; height:auto;">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
             url( @Model[1][i].background_image ); background-size:cover;">
