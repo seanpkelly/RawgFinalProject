@@ -16,6 +16,14 @@
     }
 </style>
 
+@section head{
+    <style type="text/css">
+        body {
+            background-image: linear-gradient(to bottom, rgba(105, 105, 105, 0.40), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1));
+        }
+    </style>
+}
+
 <h2 class="display-3" style="text-align: center">Your Favorite Games!</h2>
 @if (Model[0].Count < 5)
 {
@@ -75,7 +83,7 @@ else
                 else
                 {
                     <p style="color:white; font-size:40px; background-color:royalblue; height:60px; width:60px; border-radius: 5px;">@Model[0][i].userrating</p>
-                    
+
                     <a href="../Game/ClearUserRating?id=@Model[0][i].id" style="font-size:12px; height:16px; color:white; background-color: darkslategrey; border-radius: 2px;">Clear Score</a>
                 }
             <td>

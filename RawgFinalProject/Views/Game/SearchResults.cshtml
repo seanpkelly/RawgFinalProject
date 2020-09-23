@@ -11,12 +11,19 @@
         opacity: 0.6;
         cursor: not-allowed;
     }
-        tr:hover {
-            background-color: #ffff99;
-        }
+
+    tr:hover {
+        background-color: #ffff99;
+    }
 </style>
 
-
+@section head{
+    <style type="text/css">
+        body {
+            background-image: linear-gradient(to bottom, rgba(105, 105, 105, 0.40), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1));
+        }
+    </style>
+}
 
 <h2 class="display-3" style="text-align: center">@ViewBag.Header</h2>
 <br />
@@ -24,10 +31,10 @@
 @for (int i = 0; i < Model.results.Length; i++)
 {
 
-    <a href="../Game/GameDetails?id=@Model.results[i].id" style="text-decoration:none;" method="post";>
+    <a href="../Game/GameDetails?id=@Model.results[i].id" style="text-decoration:none;" method="post" ;>
         <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
 
-            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)), 
+            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
                 url( @Model.results[i].background_image ); background-size:cover;">
 
                 <td style="color:white; font-size:25px;">@Model.results[i].name</td>
