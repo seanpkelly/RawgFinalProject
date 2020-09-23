@@ -63,19 +63,18 @@ else
                     }
                 </td>
                 <td>
+                    <p style="color: white; font-size:25px;">User Score</p>
                     @if (Model[0][i].userrating == -1)
                     {
-                        <p style="color: white; font-size:25px;">User Score</p>
-                        <form action="../Game/AddUserRating" method="post">
-                            <input type="number" min="0" max="100" name="UserRating" required placeholder="0-100" style="width:30%" />
-                            <input type="number" name="id" value="@Model[0][i].id" hidden />
+                        <form action="../Game/AddUserRating" method="post" style="color:white;">
+                            <input type="number" min="0" max="100" name="UserRating" required placeholder="0-100" style="width:30%; color:white;" />
+                            <input type="number" name="id" value="@Model[0][i].id" hidden style="color:white;" />
                             <input type="submit" value="submit" />
                         </form>
-
                     }
                     else
                     {
-                        @Model[0][i].userrating
+                    <p style="color:white; font-size:40px;">@Model[0][i].userrating / 100</p>
                     }
                 <td>
                     <form action="../Game/DeleteFavorite?id=@Model[0][i].id" method="post">
