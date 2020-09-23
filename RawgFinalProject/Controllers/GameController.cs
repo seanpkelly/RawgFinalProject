@@ -127,17 +127,16 @@ namespace RawgFinalProject.Controllers
         {
             Game searchedGame = await SearchGameById(id);
             
-            //SearchResult searchResult = await _gameDAL.GetGameSearch(id.ToString());
+            Result searchResult = await _gameDAL.GetResultByName(id.ToString());
             string activeUserId = GetActiveUser();
 
-            //for (int i = 0; i < searchResult.results.Length; i++)
-            //{
+            AddToHistory(searchResult);
+
             UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == searchedGame.id).FirstOrDefault();
             if (checkForDupes != null)
             {
                 searchedGame.isFavorite = true;
             }
-            //}
 
 
 
@@ -270,6 +269,26 @@ namespace RawgFinalProject.Controllers
         }
 
         [Authorize]
+        public IActionResult ClearSuggestions()
+        {
+            //Turn into method call: CallIdString
+            string activeUserId = GetActiveUser();
+
+            List<UserHistory> deleteItem = _gameContext.UserHistory.Where(h => h.UserId == activeUserId).ToList();
+
+            foreach (var delete in deleteItem)
+            {
+                if (deleteItem != null)
+                    {
+                        _gameContext.UserHistory.Remove(delete);
+                        _gameContext.SaveChanges();
+                    }
+            }
+
+            return RedirectToAction("DisplayFavorites");
+        }
+
+        [Authorize]
         public IActionResult DeleteFavorite(int id)
         {
             //Turn into method call: CallIdString
@@ -300,6 +319,19 @@ namespace RawgFinalProject.Controllers
         }
         #endregion
 
+        public IActionResult ClearUserRating(int id)
+        {
+            string activeUserId = GetActiveUser();
+            UserFavorite favorite = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
+
+            favorite.UserRating = -1;
+
+            _gameContext.Entry(favorite).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _gameContext.Update(favorite);
+            _gameContext.SaveChanges();
+
+            return RedirectToAction("DisplayFavorites");
+        }
 
         public string GetActiveUser()
         {
@@ -456,7 +488,15 @@ namespace RawgFinalProject.Controllers
 
             List<Result> recommendationResultPool = await GenerateQuestionnaireResults(genre, tag);
 
-            return View("QuestionnaireResults", recommendationResultPool);
+            if (recommendationResultPool.Count > 0)
+            {
+                return View("QuestionnaireResults", recommendationResultPool);
+            }
+            else
+            {
+                ViewBag.NoResults = "No results found.  Please try again.";
+                return View("QuestionnaireResults", recommendationResultPool);
+            }
         }
 
         [Authorize]
@@ -466,14 +506,24 @@ namespace RawgFinalProject.Controllers
             SearchResult singlePageResults = new SearchResult();
             List<Result> recommendationResultPool = new List<Result>();
 
-            for (int i = 1; i < 5; i++)
+            try
             {
-                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
-                foreach (var result in singlePageResults.results)
+                for (int i = 1; i < 5; i++)
                 {
-                    recommendationResultPool.Add(result);
+                    singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                    foreach (var result in singlePageResults.results)
+                    {
+                        recommendationResultPool.Add(result);
+                    }
                 }
             }
+            catch (Exception)
+            {
+                List<Result> emptyList = new List<Result>();
+                return emptyList;
+            }
+            
+            
             return recommendationResultPool;
         }
 
