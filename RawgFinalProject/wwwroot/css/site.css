@@ -24,6 +24,14 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
 /* Provide sufficient contrast against white background */
 a {
   color: #0366d6;

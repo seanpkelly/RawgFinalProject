@@ -15,13 +15,13 @@
 
 
 
-<h2 style="text-align: center">@ViewBag.Header</h2>
+<h2 class="display-3" style="text-align: center">@ViewBag.Header</h2>
 <br />
 
 @for (int i = 0; i < Model.results.Length; i++)
 {
 
-    <a href="../Game/GameDetails?id=@Model.results[i].id" method="post">
+    <a href="../Game/GameDetails?id=@Model.results[i].id" style="text-decoration:none;" method="post">
         <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)), 

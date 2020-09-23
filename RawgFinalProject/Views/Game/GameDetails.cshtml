@@ -17,7 +17,7 @@
     }
 </style>
 
-<h2 style="font-size:40px;">@Model.name</h2>
+<h2 class="display-3" style="font-size:40px;">@Model.name</h2>
 
 <p>Game Description: <br />@Model.description_raw</p>
 
@@ -45,11 +45,11 @@
     @for (int i = 0; i < Model.developers.Length; i++)
         if (i < Model.developers.Length - 1)
         {
-            <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" method="post"> @($"{Model.developers[i].name}")</a><span>,&nbsp</span>
+            <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" style="text-decoration:none;" method="post"> @($"{Model.developers[i].name}")</a><span>,&nbsp</span>
         }
         else
         {
-            <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" method="post"> @($"{Model.developers[i].name}")</a>
+            <a href="../Game/GetGameByDeveloper?id=@Model.developers[i].id" style="text-decoration:none;" method="post"> @($"{Model.developers[i].name}")</a>
         }
 </p>
 
@@ -58,11 +58,11 @@
     @for (int i = 0; i < Model.publishers.Length; i++)
         if (i < Model.publishers.Length - 1)
         {
-            <a href="../Game/GetGameByPublisher?id=@Model.publishers[i].id" method="post">  @($"{Model.publishers[i].name}")</a><span>,&nbsp</span>
+            <a href="../Game/GetGameByPublisher?id=@Model.publishers[i].id" style="text-decoration:none;" method="post">  @($"{Model.publishers[i].name}")</a><span>,&nbsp</span>
         }
         else
         {
-            <a href="../Game/GetGameByPublisher?id=@Model.publishers[i].id" method="post">  @($"{Model.publishers[i].name}")</a>
+            <a href="../Game/GetGameByPublisher?id=@Model.publishers[i].id" style="text-decoration:none;" method="post">  @($"{Model.publishers[i].name}")</a>
         }
 </p>
 
