@@ -48,6 +48,11 @@ namespace RawgFinalProject.Controllers
                 questionnaireAnswers.Add(q.Genres);
                 questionnaireAnswers.Add(q.Tags);
             }
+            else
+            {
+                questionnaireAnswers.Add("");
+                questionnaireAnswers.Add("");
+            }
 
             return View(questionnaireAnswers);
         }
@@ -350,6 +355,24 @@ namespace RawgFinalProject.Controllers
             _gameContext.SaveChanges();
 
             return RedirectToAction("DisplayFavorites");
+        }
+
+        public IActionResult ResetQuestionnaire()
+        {
+            string activeUserId = GetActiveUser();
+            Questionnaire resetQuestionnaire = _gameContext.Questionnaire.Where(q => q.UserId == activeUserId).FirstOrDefault();
+
+            resetQuestionnaire.Genres = "";
+            resetQuestionnaire.Tags = "";
+
+            List<string> emptyGenreTag = new List<string>();
+            emptyGenreTag.Add("");
+            emptyGenreTag.Add("");
+            _gameContext.Entry(resetQuestionnaire).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _gameContext.Update(resetQuestionnaire);
+            _gameContext.SaveChanges();
+
+            return View("Questionnaire", emptyGenreTag);
         }
 
         public string GetActiveUser()
