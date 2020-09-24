@@ -4,14 +4,38 @@
 }
 
 
-<h2 class="display-3">Questionnaire Results</h2>
+@section head{
+    <style type="text/css">
+        body {
+            background-image: linear-gradient(to bottom, rgba(105, 105, 105, 0.40), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1));
+        }
+
+    table.center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .disabledbutton {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+}
+
+<h2 class="display-3" style="text-align: center;">Questionnaire Results</h2>
 
 @model List<Result>
 
-
+@if (Model.Count == 0)
+{
+    <h3>@ViewBag.NoResults</h3>
+    <br />
+    <form action="../Game/Questionnaire" method="post">
+        <input type="submit" value="Take The Questionnaire" />
+    </form>
+}
 
 @for (int i = 0; i < Model.Count; i++)
- {  <a href="../Game/GameDetails?id=@Model[i].id" style="text-decoration:none;" method="post">
+{<a href="../Game/GameDetails?id=@Model[i].id" method="post">
         <table class="table table-borderless center" style="table-layout:fixed; height:auto">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
@@ -29,15 +53,15 @@
                     {
                         if (Model[i].metacritic >= 75)
                         {
-                            <p style="color:white; font-size:40px; background-color:green; height:60px; width:60px; border-radius: 5px;"> @Model[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:#66CC33; height:60px; width:60px; text-align:center; border-radius: 6px;"> @Model[i].metacritic </p>
                         }
                         else if (Model[i].metacritic >= 50 && Model[i].metacritic <= 74)
                         {
-                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; width:60px; border-radius: 5px;;"> @Model[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:#FFCC33; height:60px; width:60px; text-align:center; border-radius: 6px;"> @Model[i].metacritic </p>
                         }
                         else if (Model[i].metacritic <= 49)
                         {
-                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; border-radius: 5px;"> @Model[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:#FF0000; height:60px; width:60px; text-align:center; border-radius: 6px;"> @Model[i].metacritic </p>
                         }
                     }
                 </td>
@@ -50,9 +74,9 @@
                     }
                     else
                     {
-                        <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
+                        <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" /><br />
                     }
-                <td>
+                    <br />
                     <form action="../Game/AddToWishlist?id=@Model[i].id" method="post">
                         <input type="submit" class="btn-primary" value="Add to Wishlist" />
                     </form>

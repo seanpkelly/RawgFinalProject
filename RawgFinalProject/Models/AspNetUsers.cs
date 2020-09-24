@@ -11,6 +11,7 @@ namespace RawgFinalProject.Models
             AspNetUserLogins = new HashSet<AspNetUserLogins>();
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
+            Questionnaire = new HashSet<Questionnaire>();
             UserFavorite = new HashSet<UserFavorite>();
             UserHistory = new HashSet<UserHistory>();
             WishList = new HashSet<WishList>();
@@ -36,6 +37,7 @@ namespace RawgFinalProject.Models
         public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual ICollection<Questionnaire> Questionnaire { get; set; }
         public virtual ICollection<UserFavorite> UserFavorite { get; set; }
         public virtual ICollection<UserHistory> UserHistory { get; set; }
         public virtual ICollection<WishList> WishList { get; set; }
