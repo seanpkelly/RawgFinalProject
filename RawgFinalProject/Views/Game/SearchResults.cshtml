@@ -11,9 +11,6 @@
         opacity: 0.6;
         cursor: not-allowed;
     }
-        tr:hover {
-            background-color: #ffff99;
-        }
 </style>
 
 
@@ -24,7 +21,7 @@
 @for (int i = 0; i < Model.results.Length; i++)
 {
 
-    <a href="../Game/GameDetails?id=@Model.results[i].id" style="text-decoration:none;" method="post";>
+    <a href="../Game/GameDetails?id=@Model.results[i].id" method="post";>
         <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
 
             <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)), 
@@ -42,15 +39,15 @@
                     {
                         if (Model.results[i].metacritic >= 75)
                         {
-                            <p style="color:white; font-size:40px; background-color:green; height:60px; width:60px; border-radius: 5px;"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:green; height:60px; text-align:center; width:60px; border-radius: 6px;"> @Model.results[i].metacritic </p>
                         }
                         else if (Model.results[i].metacritic >= 50 && Model.results[i].metacritic <= 74)
                         {
-                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; width:60px; border-radius: 5px;;"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:goldenrod; height:60px; text-align:center; width:60px; border-radius: 6px;"> @Model.results[i].metacritic </p>
                         }
                         else if (Model.results[i].metacritic <= 49)
                         {
-                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; border-radius: 5px;"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px; background-color:red; height:60px; width:60px; text-align:center; border-radius: 6px;"> @Model.results[i].metacritic </p>
                         }
                     }
                 </td>
