@@ -34,6 +34,7 @@ namespace RawgFinalProject.Controllers
 
         }
 
+        [Authorize]
         public IActionResult Questionnaire()
         {
             string activeUserId = GetActiveUser();
@@ -149,12 +150,15 @@ namespace RawgFinalProject.Controllers
             Result searchResult = await _gameDAL.GetResultByName(id.ToString());
             string activeUserId = GetActiveUser();
 
-            AddToHistory(searchResult);
 
             UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == searchedGame.id).FirstOrDefault();
             if (checkForDupes != null)
             {
                 searchedGame.isFavorite = true;
+            }
+            else
+            {
+                AddToHistory(searchResult);
             }
 
 
@@ -343,6 +347,7 @@ namespace RawgFinalProject.Controllers
         }
         #endregion
 
+        [Authorize]
         public IActionResult ClearUserRating(int id)
         {
             string activeUserId = GetActiveUser();
@@ -357,6 +362,7 @@ namespace RawgFinalProject.Controllers
             return RedirectToAction("DisplayFavorites");
         }
 
+        [Authorize]
         public IActionResult ResetQuestionnaire()
         {
             string activeUserId = GetActiveUser();
@@ -375,6 +381,7 @@ namespace RawgFinalProject.Controllers
             return View("Questionnaire", emptyGenreTag);
         }
 
+        [Authorize]
         public string GetActiveUser()
         {
             string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -382,6 +389,7 @@ namespace RawgFinalProject.Controllers
             return activeUserId;
         }
 
+        [Authorize]
         public Dictionary<string, int> PopulateGenreDictionary()
         {
             string[] genres =
@@ -398,6 +406,7 @@ namespace RawgFinalProject.Controllers
             return genreCountDictionary;
         }
 
+        [Authorize]
         public Dictionary<string, int> PopulateTagDictionary()
         {
             string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi",
@@ -415,6 +424,7 @@ namespace RawgFinalProject.Controllers
         }
         #region Recommendation Generation Station
 
+        [Authorize]
         public async Task<List<Result>> ConvertToResult(List<UserFavorite> favList)
         {
             List<Result> convertList = new List<Result>();
@@ -427,6 +437,7 @@ namespace RawgFinalProject.Controllers
             return convertList;
         }
 
+        [Authorize]
         public Dictionary<string,int> CountGenreOccurences(List<Result> convertList, Dictionary<string,int> genreCountDictionary)
         {
             foreach (Result result in convertList)
@@ -445,6 +456,7 @@ namespace RawgFinalProject.Controllers
             return genreCountDictionary;
         }
 
+        [Authorize]
         public Dictionary<string, int> CountTagOccurences(List<Result> convertList, Dictionary<string, int> tagCountDictionary)
         {
             foreach (Result result in convertList)
@@ -463,6 +475,7 @@ namespace RawgFinalProject.Controllers
             return tagCountDictionary;
         }
 
+        [Authorize]
         public Dictionary<string, double> CalculateWeights(Dictionary<string, int> countDictionary)
         {
             int totalGenres = 0;
@@ -509,6 +522,7 @@ namespace RawgFinalProject.Controllers
             return genreAndTagDictionaries;
         }
 
+        [Authorize]
         public string CreateQuery(Dictionary<string, double> dictionary)
         {
             string query = "";
@@ -605,6 +619,7 @@ namespace RawgFinalProject.Controllers
             return recommendationResultPool;
         }
 
+        [Authorize]
         public async Task<List<Result>> GenerateResultPool(string genreQuery, string tagQuery)
         {
             SearchResult singlePageResults = new SearchResult();
@@ -612,10 +627,10 @@ namespace RawgFinalProject.Controllers
 
             string activeUserId = GetActiveUser();
 
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < 15; i++)
             {
-                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
-                //singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres=sports&page={i}");
+                //&tags ={ tagQuery}
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&page={i}");
 
                 foreach (var result in singlePageResults.results)
                 {
@@ -630,6 +645,7 @@ namespace RawgFinalProject.Controllers
             return recommendationResultPool;
         }
 
+        [Authorize]
         public List<Result> GenerateScores(List<Result> recommendationResultPool, List<Dictionary<string, double>> weights)
         {
             List<Result> gameRecs = new List<Result>();
@@ -682,6 +698,7 @@ namespace RawgFinalProject.Controllers
         }
         #endregion
 
+        [Authorize]
         public void AddToHistory(Result addToHistory)
         {
             string activeUserId = GetActiveUser();
@@ -794,6 +811,7 @@ namespace RawgFinalProject.Controllers
             return RedirectToAction("DisplayWishlist");
         }
 
+        [Authorize]
         public async Task<IActionResult> IndieGames()
         {
             var indieGames = await _gameDAL.GetGameListByGenreAndTag("genres=indie");
