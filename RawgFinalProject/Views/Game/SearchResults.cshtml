@@ -1,88 +1,128 @@
 ﻿
 @model SearchResult
 
-<style>
-    table.center {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .disabledbutton {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-</style>
-
 @section head{
     <style type="text/css">
+
         body {
             background-image: linear-gradient(to bottom, rgba(105, 105, 105, 0.40), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1), rgba(0, 0, 0, 1));
+        }
+
+        table.center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .disabledbutton {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        form.search input[type=text] {
+            padding: 10px;
+            font-size: 17px;
+            border: 1px solid grey;
+            float: left;
+            width: 80%;
+            background: #f1f1f1;
+        }
+
+        form.search button {
+            float: left;
+            width: 20%;
+            padding: 5px;
+            background-color: #ddd;
+            color: black;
+            font-size: 24px;
+            border: 1px solid grey;
+            border-left: none;
+            cursor: pointer;
+        }
+
+            form.search button:hover {
+                color: white;
+                background-color: darkorange;
+            }
+
+        form.search::after {
+            content: "";
+            clear: both;
+            display: table;
         }
     </style>
 }
 
-@if (Model.results.Length == 0)
-{
-    <h2 class="display-3" style="text-align: center">@ViewBag.Header</h2>
-    <h3>@ViewBag.NoResults</h3>
-    <br />
-    <form action="../Game/SearchGames" method="post">
-        <input type="submit" value="Search for Games" />
+
+    @if (Model.results.Length == 0)
+    {
+        <h2 class="display-3" style="text-align: center">@ViewBag.Header</h2>
+        <h3>@ViewBag.NoResults</h3>
+        <br />
+        <form action="../Game/SearchGames" method="post">
+            <input type="submit" value="Search for Games" />
+        </form>
+    }
+    else
+    {
+        <h2 class="display-3" style="text-align: center">@ViewBag.Header</h2>
+        <br />
+    }
+
+    <form class="search" action="../Game/SearchGameByName" method="post">
+        <input type="text" placeholder="Search for Games..." name="searchName" required>
+        <button style="height:47px;" type="submit">Search</button>
     </form>
-}
-else
-{
-    <h2 class="display-3" style="text-align: center">@ViewBag.Header</h2>
     <br />
-}
 
+    @for (int i = 0; i < Model.results.Length; i++)
+    {
 
+        <a href="../Game/GameDetails?id=@Model.results[i].id" method="post" ;>
+            <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
 
-@for (int i = 0; i < Model.results.Length; i++)
-{
-
-    <a href="../Game/GameDetails?id=@Model.results[i].id" method="post" ;>
-        <table class="table table-borderless center" style="table-layout:fixed; height:auto;">
-
-            <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
+                <tr style="background-image: linear-gradient(to bottom, rgb(20, 20, 20), rgba(105, 105, 105, 0.35)),
                 url( @Model.results[i].background_image ); background-size:cover;">
 
-                <td style="color:white; font-size:30px;">@Model.results[i].name</td>
+                    <td style="color:white; font-size:30px;">@Model.results[i].name</td>
 
-                <td>
-                    <p style="color:white; font-size:25px;">Metacritic</p>
-                    @if (Model.results[i].metacritic == null)
-                    {
-                        <p style="color:white; font-size:40px;">N/A</p>
-                    }
-                    else
-                    {
-                        if (Model.results[i].metacritic >= 75)
+                    <td>
+                        <p style="color:white; font-size:25px;">Metacritic</p>
+                        @if (Model.results[i].metacritic == null)
                         {
-                            <p style="color:white; font-size:40px; background-color:#66CC33; height:60px; text-align:center; width:60px; border-radius: 6px;"> @Model.results[i].metacritic </p>
+                            <p style="color:white; font-size:40px;">N/A</p>
                         }
-                        else if (Model.results[i].metacritic >= 50 && Model.results[i].metacritic <= 74)
+                        else
                         {
-                            <p style="color:white; font-size:40px; background-color:#FFCC33; height:60px; text-align:center; width:60px; border-radius: 6px;"> @Model.results[i].metacritic </p>
+                            if (Model.results[i].metacritic >= 75)
+                            {
+                                <p style="color:white; font-size:40px; background-color:#66CC33; height:60px; text-align:center; width:60px; border-radius: 6px;"> @Model.results[i].metacritic </p>
+                            }
+                            else if (Model.results[i].metacritic >= 50 && Model.results[i].metacritic <= 74)
+                            {
+                                <p style="color:white; font-size:40px; background-color:#FFCC33; height:60px; text-align:center; width:60px; border-radius: 6px;"> @Model.results[i].metacritic </p>
+                            }
+                            else if (Model.results[i].metacritic <= 49)
+                            {
+                                <p style="color:white; font-size:40px; background-color:#FF0000; height:60px; width:60px; text-align:center; border-radius: 6px;"> @Model.results[i].metacritic </p>
+                            }
                         }
-                        else if (Model.results[i].metacritic <= 49)
+                    </td>
+                    <td>
+                        @if (!Model.results[i].isfavorite)
                         {
-                            <p style="color:white; font-size:40px; background-color:#FF0000; height:60px; width:60px; text-align:center; border-radius: 6px;"> @Model.results[i].metacritic </p>
-                        }
-                    }
-                </td>
-                <td>
-                    @if (!Model.results[i].isfavorite)
-                    {
-                        <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
-                            <input type="submit" class="btn-success" value="Add to Favorites" />
+                            <form action="../Game/AddToFavorites?id=@Model.results[i].id" method="post">
+                                <input type="submit" class="btn-success" value="Add to Favorites" />
 
-                        </form>
-                    }
-                    else
-                    { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
-                    }
-            </tr>
-        </table>
-    </a>
-}
+                            </form>
+                        }
+                        else
+                        { <input type="submit" class="btn-success disabledbutton" disabled value="Already Favorited" />
+                        }
+                </tr>
+            </table>
+        </a>
+    }
