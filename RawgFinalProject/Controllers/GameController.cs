@@ -32,27 +32,25 @@ namespace RawgFinalProject.Controllers
         }
 
         [Authorize]
-        public IActionResult Questionnaire()
+        public string GetActiveUser()
+        {
+            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            return activeUserId;
+        }
+        [Authorize]
+        public IActionResult ClearUserRating(int id)
         {
             string activeUserId = GetActiveUser();
+            UserFavorite favorite = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
 
-            //Creates list of favorites for the current user
-            List<string> questionnaireAnswers= new List<string>();
+            favorite.UserRating = -1;
 
-            Questionnaire q = (_gameContext.Questionnaire.Where(x => x.UserId == activeUserId).FirstOrDefault());
+            _gameContext.Entry(favorite).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _gameContext.Update(favorite);
+            _gameContext.SaveChanges();
 
-            if (q != null)
-            {
-                questionnaireAnswers.Add(q.Genres);
-                questionnaireAnswers.Add(q.Tags);
-            }
-            else
-            {
-                questionnaireAnswers.Add("");
-                questionnaireAnswers.Add("");
-            }
-
-            return View(questionnaireAnswers);
+            return RedirectToAction("DisplayFavorites");
         }
 
         #region Search for Games
@@ -365,21 +363,7 @@ namespace RawgFinalProject.Controllers
         }
         #endregion
 
-        [Authorize]
-        public IActionResult ClearUserRating(int id)
-        {
-            string activeUserId = GetActiveUser();
-            UserFavorite favorite = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
-
-            favorite.UserRating = -1;
-
-            _gameContext.Entry(favorite).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _gameContext.Update(favorite);
-            _gameContext.SaveChanges();
-
-            return RedirectToAction("DisplayFavorites");
-        }
-
+        #region Questionnaire
         [Authorize]
         public IActionResult ResetQuestionnaire()
         {
@@ -400,46 +384,129 @@ namespace RawgFinalProject.Controllers
         }
 
         [Authorize]
-        public string GetActiveUser()
+        public IActionResult Questionnaire()
         {
-            string activeUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string activeUserId = GetActiveUser();
 
-            return activeUserId;
+            //Creates list of favorites for the current user
+            List<string> questionnaireAnswers = new List<string>();
+
+            Questionnaire q = (_gameContext.Questionnaire.Where(x => x.UserId == activeUserId).FirstOrDefault());
+
+            if (q != null)
+            {
+                questionnaireAnswers.Add(q.Genres);
+                questionnaireAnswers.Add(q.Tags);
+            }
+            else
+            {
+                questionnaireAnswers.Add("");
+                questionnaireAnswers.Add("");
+            }
+
+            return View(questionnaireAnswers);
         }
 
         [Authorize]
-        public Dictionary<string, int> PopulateGenreDictionary()
+        public async Task<IActionResult> GenerateQuestionnaireRecommendations(Microsoft.AspNetCore.Http.IFormCollection form)
         {
-            string[] genres =
-                { "Action", "Indie", "Adventure", "RPG", "Strategy",
-                "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing",
-                "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Games", "Educational", "Card" };
 
-            Dictionary<string, int> genreCountDictionary = new Dictionary<string, int>();
-            foreach (var g in genres)
+            string genre = form["genre"];
+            string tag = form["tag"];
+
+            //save questionnaire results here
+
+            string activeUserId = GetActiveUser();
+
+            if (genre == null)
             {
-                genreCountDictionary.Add(g, 0);
+                genre = "";
+            }
+            if (tag == null)
+            {
+                tag = "";
             }
 
-            return genreCountDictionary;
+            Questionnaire qToUpdate = _gameContext.Questionnaire.Where(q => q.UserId == activeUserId).FirstOrDefault();
+
+            if (qToUpdate != null)
+            {
+                qToUpdate.Genres = genre;
+                qToUpdate.Tags = tag;
+
+                _gameContext.Entry(qToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                _gameContext.Update(qToUpdate);
+                _gameContext.SaveChanges();
+            }
+            else
+            {
+                Questionnaire q = new Questionnaire();
+
+                q.UserId = activeUserId;
+                q.Genres = genre;
+                q.Tags = tag;
+                if (ModelState.IsValid)
+                {
+                    _gameContext.Questionnaire.Add(q);
+                    _gameContext.SaveChanges();
+                }
+            }
+
+            List<Result> recommendationResultPool = await GenerateQuestionnaireResults(genre, tag);
+
+            if (recommendationResultPool.Count > 0)
+            {
+                return View("QuestionnaireResults", recommendationResultPool);
+            }
+            else
+            {
+                ViewBag.NoResults = "No results found.  Please try again.";
+                return View("QuestionnaireResults", recommendationResultPool);
+            }
         }
 
         [Authorize]
-        public Dictionary<string, int> PopulateTagDictionary()
+        [HttpPost]
+        public async Task<List<Result>> GenerateQuestionnaireResults(string genreQuery, string tagQuery)
         {
-            string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi",
-                "2D", "Third Person", "FPS", "Horror", "Fantasy", "Comedy", "Sandbox", "Survival", "Exploration", "Stealth", "Tactical", "Pixel Graphics", "Action RPG", "Retro",
-                "Space", "Zombies", "Point & Click", "Action-Adventure", "Hack and Slash", "Side Scroller", "Survival Horror", "RTS", "Roguelike", "mmo", "Driving", "Puzzle",
-                "MMORPG", "Management", "JRPG" };
+            SearchResult singlePageResults = new SearchResult();
+            List<Result> recommendationResultPool = new List<Result>();
 
-            Dictionary<string, int> tagCountDictionary = new Dictionary<string, int>();
-            foreach (var t in tags)
+            genreQuery = genreQuery.Replace("RPG", "role-playing-games-rpg");
+            genreQuery = genreQuery.Replace("Massively Multiplayer", "Massively-Multiplayer");
+            genreQuery = genreQuery.Replace("Board Games", "Board-Games");
+
+            tagQuery = tagQuery.Replace(" ", "-");
+
+            try
             {
-                tagCountDictionary.Add(t, 0);
+                for (int i = 1; i < 10; i++)
+                {
+                    singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
+                    foreach (var result in singlePageResults.results)
+                    {
+                        string activeUserId = GetActiveUser();
+                        UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
+
+                        if (checkForDupes != null)
+                        {
+                            result.isfavorite = checkForDupes.IsFavorite;
+                        }
+                        recommendationResultPool.Add(result);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                List<Result> emptyList = new List<Result>();
+                return emptyList;
             }
 
-            return tagCountDictionary;
+
+            return recommendationResultPool;
         }
+        #endregion
+
         #region Recommendation Generation Station
 
         [Authorize]
@@ -553,104 +620,7 @@ namespace RawgFinalProject.Controllers
             }
             return query;
         }
-        [Authorize]
-        public async Task<IActionResult> GenerateQuestionnaireRecommendations(Microsoft.AspNetCore.Http.IFormCollection form)
-        {
-
-            string genre = form["genre"];
-            string tag = form["tag"];
-
-            //save questionnaire results here
-
-            string activeUserId = GetActiveUser();
-
-            if (genre == null)
-            {
-                genre = "";
-            }
-            if (tag == null)
-            {
-                tag = "";
-            }
-
-            Questionnaire qToUpdate = _gameContext.Questionnaire.Where(q => q.UserId == activeUserId).FirstOrDefault();
-
-            if (qToUpdate != null)
-            {
-                qToUpdate.Genres = genre;
-                qToUpdate.Tags = tag;
-
-                _gameContext.Entry(qToUpdate).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                _gameContext.Update(qToUpdate);
-                _gameContext.SaveChanges();
-            }
-            else
-            {
-                Questionnaire q = new Questionnaire();
-
-                q.UserId = activeUserId;
-                q.Genres = genre;
-                q.Tags = tag;
-                if (ModelState.IsValid)
-                {
-                    _gameContext.Questionnaire.Add(q);
-                    _gameContext.SaveChanges();
-                }
-            }
-
-            List<Result> recommendationResultPool = await GenerateQuestionnaireResults(genre, tag);
-
-            if (recommendationResultPool.Count > 0)
-            {
-                return View("QuestionnaireResults", recommendationResultPool);
-            }
-            else
-            {
-                ViewBag.NoResults = "No results found.  Please try again.";
-                return View("QuestionnaireResults", recommendationResultPool);
-            }
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<List<Result>> GenerateQuestionnaireResults(string genreQuery, string tagQuery)
-        {
-            SearchResult singlePageResults = new SearchResult();
-            List<Result> recommendationResultPool = new List<Result>();
-
-            genreQuery = genreQuery.Replace("RPG", "role-playing-games-rpg");
-            genreQuery = genreQuery.Replace("Massively Multiplayer", "Massively-Multiplayer");
-            genreQuery = genreQuery.Replace("Board Games", "Board-Games");
-
-            tagQuery = tagQuery.Replace(" ", "-");
-
-            try
-            {
-                for (int i = 1; i < 10; i++)
-                {
-                    singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
-                    foreach (var result in singlePageResults.results)
-                    {
-                        string activeUserId = GetActiveUser();
-                        UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
-
-                        if (checkForDupes != null)
-                        {
-                            result.isfavorite = checkForDupes.IsFavorite;
-                        }
-                        recommendationResultPool.Add(result);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                List<Result> emptyList = new List<Result>();
-                return emptyList;
-            }
-            
-            
-            return recommendationResultPool;
-        }
+      
 
         [Authorize]
         public async Task<List<Result>> GenerateResultPool(string genreQuery, string tagQuery)
@@ -716,7 +686,6 @@ namespace RawgFinalProject.Controllers
             return orderedRecs;
         }
  
-
         [Authorize]
         public async Task<IActionResult> GenerateRecommendations()
         {
@@ -731,8 +700,43 @@ namespace RawgFinalProject.Controllers
 
             return View("GenerateRecommendations", orderedRecs);
         }
+
+        [Authorize]
+        public Dictionary<string, int> PopulateGenreDictionary()
+        {
+            string[] genres =
+                { "Action", "Indie", "Adventure", "RPG", "Strategy",
+                "Shooter", "Casual", "Simulation", "Puzzle", "Arcade", "Platformer", "Racing",
+                "Sports", "Massively Multiplayer", "Family", "Fighting", "Board Games", "Educational", "Card" };
+
+            Dictionary<string, int> genreCountDictionary = new Dictionary<string, int>();
+            foreach (var g in genres)
+            {
+                genreCountDictionary.Add(g, 0);
+            }
+
+            return genreCountDictionary;
+        }
+
+        [Authorize]
+        public Dictionary<string, int> PopulateTagDictionary()
+        {
+            string[] tags = { "Singleplayer", "Multiplayer", "Atmospheric", "Great Soundtrack", "RPG", "Co-op", "Story Rich", "Open World", "cooperative", "First-Person", "Sci-fi",
+                "2D", "Third Person", "FPS", "Horror", "Fantasy", "Comedy", "Sandbox", "Survival", "Exploration", "Stealth", "Tactical", "Pixel Graphics", "Action RPG", "Retro",
+                "Space", "Zombies", "Point & Click", "Action-Adventure", "Hack and Slash", "Side Scroller", "Survival Horror", "RTS", "Roguelike", "mmo", "Driving", "Puzzle",
+                "MMORPG", "Management", "JRPG" };
+
+            Dictionary<string, int> tagCountDictionary = new Dictionary<string, int>();
+            foreach (var t in tags)
+            {
+                tagCountDictionary.Add(t, 0);
+            }
+
+            return tagCountDictionary;
+        }
         #endregion
 
+        #region History
         [Authorize]
         public void AddToHistory(Result addToHistory)
         {
@@ -772,7 +776,9 @@ namespace RawgFinalProject.Controllers
 
             return View("DisplayHistory", convertList);
         }
+        #endregion
 
+        #region Wishlist
         [Authorize]
         public async Task<IActionResult> DisplayWishlist() //check performance?
         {
@@ -826,7 +832,7 @@ namespace RawgFinalProject.Controllers
             }
 
         }
-
+    
         [Authorize]
         public IActionResult DeleteWishlist(int id)
         {
@@ -845,13 +851,17 @@ namespace RawgFinalProject.Controllers
 
             return RedirectToAction("DisplayWishlist");
         }
+        #endregion
 
+        #region Indie Games
         [Authorize]
+
         public async Task<IActionResult> IndieGames()
         {
             var indieGames = await _gameDAL.GetGameListByGenreAndTag("genres=indie");
 
             return View(indieGames);
         }
+        #endregion
     }
 }
