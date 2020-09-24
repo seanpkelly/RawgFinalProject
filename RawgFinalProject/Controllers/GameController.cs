@@ -451,7 +451,7 @@ namespace RawgFinalProject.Controllers
             //if there is an error querying an empty list is returned
             try
             {
-                for (int i = 1; i < 10; i++)
+                for (int i = 1; i < 2; i++)
                 {
                     singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
                     foreach (var result in singlePageResults.results)
@@ -869,6 +869,17 @@ namespace RawgFinalProject.Controllers
         {
             //sends list of Indie games to view
             var indieGames = await _gameDAL.GetGameListByGenreAndTag("genres=indie");
+
+            foreach (var result in indieGames.results)
+            {
+                string activeUserId = GetActiveUser();
+                UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == result.id).FirstOrDefault();
+
+                if (checkForDupes != null)
+                {
+                    result.isfavorite = checkForDupes.IsFavorite;
+                }
+            }
 
             return View(indieGames);
         }
