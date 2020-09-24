@@ -22,7 +22,6 @@ namespace RawgFinalProject.Models
         public string slug { get; set; }
         public string name { get; set; }
         public int playtime { get; set; }
-        //public Platform[] platforms { get; set; }
         public Store[] stores { get; set; }
         public string released { get; set; }
         public bool tba { get; set; }
@@ -45,7 +44,6 @@ namespace RawgFinalProject.Models
         public string saturated_color { get; set; }
         public string dominant_color { get; set; }
         public Short_Screenshots[] short_screenshots { get; set; }
-        //public Parent_Platforms[] parent_platforms { get; set; }
         public Genre[] genres { get; set; }
         public double recommendationScore { get; set; }
         public string description { get; set; }
@@ -85,18 +83,6 @@ namespace RawgFinalProject.Models
         public string full { get; set; }
     }
 
-    //public class Platform
-    //{
-    //    public Platform1 platform { get; set; }
-    //}
-
-    //public class Platform1
-    //{
-    //    public int id { get; set; }
-    //    public string name { get; set; }
-    //    public string slug { get; set; }
-    //}
-
     public class Store
     {
         public Store1 store { get; set; }
@@ -132,18 +118,6 @@ namespace RawgFinalProject.Models
         public int id { get; set; }
         public string image { get; set; }
     }
-
-    //public class Parent_Platforms
-    //{
-    //    public Platform2 platform { get; set; }
-    //}
-
-    //public class Platform2
-    //{
-    //    public int id { get; set; }
-    //    public string name { get; set; }
-    //    public string slug { get; set; }
-    //}
 
     public class Genre
     {
