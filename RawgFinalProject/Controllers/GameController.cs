@@ -28,10 +28,7 @@ namespace RawgFinalProject.Controllers
 
         public async Task<IActionResult> SearchGames()
         {
-            Game games = await _gameDAL.GetGamesList();
-
-            return View(games);
-
+            return View();
         }
 
         [Authorize]
@@ -133,9 +130,30 @@ namespace RawgFinalProject.Controllers
                 tagQuery += tag.name.Replace(" ", "-").ToLower() + ",";
             }
 
-            tagQuery = tagQuery.Substring(0, tagQuery.Length - 1);
+            //tagQuery = tagQuery.Substring(0, tagQuery.Length - 1);
 
-            SearchResult similarGameResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
+            SearchResult similarGameResults = new SearchResult();
+
+            if (genreQuery == "" && tagQuery != "")
+            {
+                similarGameResults = await _gameDAL.GetGameListByGenreAndTag($"tags={tagQuery}");
+
+            }
+            else if (genreQuery != "" && tagQuery == "")
+            {
+                similarGameResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}");
+            }
+            else if (genreQuery == "" && tagQuery == "")
+            {
+                ViewBag.NoResults = "No Results Found";
+                ViewBag.Header = $"More games like {game.name}.";
+                return View("SearchResults", similarGameResults);
+            }
+            else
+            {
+                similarGameResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}");
+            }
+
 
             ViewBag.Header = $"More games like {game.name}.";
 
@@ -220,7 +238,7 @@ namespace RawgFinalProject.Controllers
 
             //remove game from history list if its added to favorites
             DeleteHistory(id);
-
+            DeleteWishlist(id);
 
             //check for dupes does not throw an error message or return to search results correctly yet
             UserFavorite checkForDupes = _gameContext.UserFavorite.Where(f => f.UserId == activeUserId && f.GameId == id).FirstOrDefault();
@@ -546,6 +564,15 @@ namespace RawgFinalProject.Controllers
 
             string activeUserId = GetActiveUser();
 
+            if (genre == null)
+            {
+                genre = "";
+            }
+            if (tag == null)
+            {
+                tag = "";
+            }
+
             Questionnaire qToUpdate = _gameContext.Questionnaire.Where(q => q.UserId == activeUserId).FirstOrDefault();
 
             if (qToUpdate != null)
@@ -591,9 +618,15 @@ namespace RawgFinalProject.Controllers
             SearchResult singlePageResults = new SearchResult();
             List<Result> recommendationResultPool = new List<Result>();
 
+            genreQuery = genreQuery.Replace("RPG", "role-playing-games-rpg");
+            genreQuery = genreQuery.Replace("Massively Multiplayer", "Massively-Multiplayer");
+            genreQuery = genreQuery.Replace("Board Games", "Board-Games");
+
+            tagQuery = tagQuery.Replace(" ", "-");
+
             try
             {
-                for (int i = 1; i < 5; i++)
+                for (int i = 1; i < 10; i++)
                 {
                     singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
                     foreach (var result in singlePageResults.results)
@@ -626,6 +659,8 @@ namespace RawgFinalProject.Controllers
             List<Result> recommendationResultPool = new List<Result>();
 
             string activeUserId = GetActiveUser();
+
+            genreQuery.Replace("RPG", "role-playing-games-rpg");
 
             for (int i = 1; i < 15; i++)
             {
