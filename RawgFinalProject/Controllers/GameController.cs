@@ -627,10 +627,10 @@ namespace RawgFinalProject.Controllers
 
             string activeUserId = GetActiveUser();
 
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < 15; i++)
             {
-                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&tags={tagQuery}&page={i}");
-                //singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres=sports&page={i}");
+                //&tags ={ tagQuery}
+                singlePageResults = await _gameDAL.GetGameListByGenreAndTag($"genres={genreQuery}&page={i}");
 
                 foreach (var result in singlePageResults.results)
                 {
